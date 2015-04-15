@@ -76,5 +76,23 @@ public class OrderImpl implements Order {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void setShipAddress(Address add) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setBillAddress(Address add) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPaymentInfo(CreditCard cc) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

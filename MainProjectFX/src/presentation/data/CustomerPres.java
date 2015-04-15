@@ -32,7 +32,7 @@ public class CustomerPres {
 		return new SimpleStringProperty(custProfile.getLastName());
 	}
 	public SimpleStringProperty fullNameProperty() {
-		return new SimpleStringProperty(firstName.get() + " " + lastName.get());
+		return new SimpleStringProperty(custProfile.getFirstName() + " " + custProfile.getLastName());
 	}
 	public CustomerProfile getCustProfile() {
 		return custProfile;
