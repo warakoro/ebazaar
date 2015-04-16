@@ -116,8 +116,12 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	 * address in ship/bill window 
 	 */
     public List<Address> getAllAddresses() throws BackendException {
+    	/*Stubbing*/ 
+    	List<Address> listOfAddress = new ArrayList();
+    	Address add1 = new AddressImpl("1000 N 4th street", "Fairfield", "Iowa", "52557", false, true);
+    	Address add2 = new AddressImpl("1000 Bullington street", "New York City", "New York", "52557", false, true); 
     	return new ArrayList<Address>();
-    	//implement
+    	//implement 
     }
 
 	public Address runAddressRules(Address addr) throws RuleException,

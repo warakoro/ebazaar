@@ -108,8 +108,8 @@ class DbClassAddress implements DbClass, DbClassAddressForTest {
         				  address.getZip() + "')";
     }
     void buildReadAllAddressesQuery() {
-    	//IMPLEMENT -- change custid = 1 to a valid custid 
-        query = "SELECT * from altaddress WHERE custid = 1";
+    	//IMPLEMENT -- change custid = 1 to a valid custid ////DONE\\\\\
+        query = "SELECT * from altaddress WHERE custid = "+custProfile.getCustId() ;
     }
     void buildReadDefaultBillQuery() {
         query = "SELECT billaddress1, billaddress2, billcity, billstate, billzipcode " +
