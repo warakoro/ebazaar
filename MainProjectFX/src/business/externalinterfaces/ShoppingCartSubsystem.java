@@ -37,17 +37,17 @@ public interface ShoppingCartSubsystem {
 	
 
 //	
-//	/** 
-//	 * Empties the live cart. This needs to be done after an order has been submitted 
-//	 */
-//	public void clearLiveCart();
+	/** 
+	 * Empties the live cart. This needs to be done after an order has been submitted 
+ */
+	public void clearLiveCart();
 
-//
-//	/**Used to display items currently in live shopping cart (for instance, when an item is added to cart
-//	 * and the CartItemsWindow is about to be displayed). the method returns the list of cart items currently
-//	 * stored in the live cart, sitting in the shopping cart subsystem facade */
-//	public List<CartItem> getLiveCartItems();
-//	
+
+	/**Used to display items currently in live shopping cart (for instance, when an item is added to cart
+	 * and the CartItemsWindow is about to be displayed). the method returns the list of cart items currently
+	 * stored in the live cart, sitting in the shopping cart subsystem facade */
+	public List<CartItem> getLiveCartItems();
+	
 //	/**
 //	 * Accessor used by customer subsystem to store user's selected ship address during checkout;
 //	 * stores value in shop cart facade 

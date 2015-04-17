@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import middleware.exceptions.DatabaseException;
+import business.customersubsystem.RulesPayment;
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
 import business.exceptions.RuleException;
@@ -23,6 +24,7 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 	ShoppingCartImpl liveCart = new ShoppingCartImpl(new LinkedList<CartItem>());
 	ShoppingCartImpl savedCart;
 	Integer shopCartId;
+	DbClassShoppingCart dbClass = new DbClassShoppingCart();
 	CustomerProfile customerProfile;
 	Logger log = Logger.getLogger(this.getClass().getPackage().getName());
 
@@ -42,7 +44,7 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 
 	public void retrieveSavedCart() throws BackendException {
 		try {
-			DbClassShoppingCart dbClass = new DbClassShoppingCart();
+//			DbClassShoppingCart dbClass = new DbClassShoppingCart();
 			ShoppingCartImpl cartFound = dbClass.retrieveSavedCart(customerProfile);
 			if(cartFound == null) {
 				savedCart = new ShoppingCartImpl(new ArrayList<CartItem>());
@@ -68,11 +70,10 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 		liveCart.setCartItems(list);
 	}
 	
+	
 	public List<CartItem> getCartItems() {
 		return liveCart.getCartItems();
 	}
-
-
 	
 	//interface methods for testing
 	
@@ -84,5 +85,68 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 	public CartItem getEmptyCartItemForTest() {
 		return new CartItemImpl();
 	}
+
+	@Override
+	public void clearLiveCart() {
+		// TODO Auto-generated method stub
+		liveCart = new ShoppingCartImpl(new LinkedList<CartItem>());
+		
+	}
+
+	@Override
+	public List<CartItem> getLiveCartItems() {
+		// TODO Auto-generated method stub
+		return liveCart.getCartItems();
+	}
+
+	@Override
+	public void setShippingAddress(Address addr) {
+		// TODO Auto-generated method stub
+		liveCart.setShipAddress(addr);
+		
+	}
+
+	@Override
+	public void setBillingAddress(Address addr) {
+		// TODO Auto-generated method stub
+		liveCart.setBillAddress(addr);
+		
+	}
+
+	@Override
+	public void setPaymentInfo(CreditCard cc) {
+		// TODO Auto-generated method stub
+		liveCart.setPaymentInfo(cc);
+		
+	}
+
+	@Override
+	public void saveLiveCart() throws BackendException {
+		// TODO Auto-generated method stub
+
+		try {
+			dbClass.saveCart(customerProfile, liveCart);
+		} catch (DatabaseException e) {
+			// TODO Auto-generated catch block
+			throw new BackendException(e);
+		}
+		
+	}
+
+//	@Override
+//	public void runShoppingCartRules() throws RuleException, BusinessException {
+//		// TODO Auto-generated method stub
+//		Rules transferObject = new RulesShoppingCart(liveCart);
+//				transferObject.runRules();
+//		
+//	}
+//
+//	@Override
+//	public void runFinalOrderRules() throws RuleException, BusinessException {
+//		// TODO Auto-generated method stub
+		
+	}
+	
+	
 
 }
