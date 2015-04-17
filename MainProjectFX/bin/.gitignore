@@ -1,7 +1,4 @@
-/presentation/
 /middleware/
 /business/
 /launch/
-/EbazSimpleFormatter.class
-/EbazRuntimeException.class
-/resources/
+/presentation/
