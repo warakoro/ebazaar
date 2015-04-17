@@ -48,48 +48,50 @@ public interface ShoppingCartSubsystem {
 	 * stored in the live cart, sitting in the shopping cart subsystem facade */
 	public List<CartItem> getLiveCartItems();
 	
-//	/**
-//	 * Accessor used by customer subsystem to store user's selected ship address during checkout;
-//	 * stores value in shop cart facade 
-//	 */
-//	public void setShippingAddress(Address addr);
-//	
-//	/**
-//	 * Accessor used by customer subsystem to store user's selected ship address during checkout;
-//	 * stores value in shop cart facade 
-//	 */
-//	public void setBillingAddress(Address addr);
-//	/**
-//	 * Accessor used by customer subsystem to store user's selected ship address during checkout;
-//	 * stores value in shop cart facade 
-//	 */
-//	public void setPaymentInfo(CreditCard cc);
-//	
-//	
-//	
-//	/** 
-//	 * Used when user choose the option to 'retrieve saved cart' -- which
-//	 * requires that the customer's saved cart be stored in the live cart
-//	 * in the shopping cart subsystem facade
-//	 */
-//	public void makeSavedCartLive();
-//
-//	/** used when user selects the "Save Cart" option on the cart items window */
-//	public void saveLiveCart() throws BackendException;
-//
-//      /**
-//       *  Used when a user enters Checkout use case by
-//       *  clicking "Proceed to Checkout" -- at that time
-//       *  rules concerning validity of shopping cart are run
-//       *  (for instance, user may not have an empty cart)
-//       */	
+	/**
+	 * Accessor used by customer subsystem to store user's selected ship address during checkout;
+	 * stores value in shop cart facade 
+	 */
+  public void setShippingAddress(Address addr);
+
+	/**
+	 * Accessor used by customer subsystem to store user's selected ship address during checkout;
+	 * stores value in shop cart facade 
+	 */
+	public void setBillingAddress(Address addr);
+	/**
+	 * Accessor used by customer subsystem to store user's selected ship address during checkout;
+	 * stores value in shop cart facade 
+	 */
+	public void setPaymentInfo(CreditCard cc);
+	
+	
+	
+	/** 
+	 * Used when user choose the option to 'retrieve saved cart' -- which
+	 * requires that the customer's saved cart be stored in the live cart
+	 * in the shopping cart subsystem facade
+	 */
+	
+
+	/** used when user selects the "Save Cart" option on the cart items window */
+	public void saveLiveCart() throws BackendException;
+
+      /**
+       *  Used when a user enters Checkout use case by
+      *  clicking "Proceed to Checkout" -- at that time
+      *  rules concerning validity of shopping cart are run
+      *  (for instance, user may not have an empty cart)
+      */	
+	
+	//Need to ask Dr.Corazza about how stubbing Rules would work. Not sure why FinalOrderRules are here actually.
 //	public void runShoppingCartRules() throws RuleException, BusinessException;
 //
 //	/** 
 //       *  Invoked when user attempts to submit final order
-//       *  -- rules are run to check validity of the order
-//       *  (for example, quantity available for each product order
-//       *  will be checked against quantity requested)
-//       */
+//      *  -- rules are run to check validity of the order
+//      *  (for example, quantity available for each product order
+//      *  will be checked against quantity requested)
+//     */
 //   public void runFinalOrderRules() throws RuleException, BusinessException;
 }
