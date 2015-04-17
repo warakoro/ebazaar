@@ -11,6 +11,7 @@ import business.externalinterfaces.Address;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerProfile;
 import business.externalinterfaces.CustomerSubsystem;
+import business.externalinterfaces.DbClassAddressForTest;
 import business.externalinterfaces.Order;
 import business.externalinterfaces.OrderSubsystem;
 import business.externalinterfaces.Rules;
@@ -157,5 +158,84 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	public static CreditCard createCreditCard(String nameOnCard,
 			String expirationDate, String cardNum, String cardType) {
 		return new CreditCardImpl(nameOnCard, expirationDate, cardNum, cardType);
+	}
+
+	@Override
+	public List<Order> getOrderHistory() throws BackendException {
+		/*Stubbing*/
+	/*	List<Order> orderList = new ArrayList();
+		Order ord1 = new OrderImpl();
+		ord1.setOrderId(1);
+		List<OrderItem> orderItem = new ArrayList();
+		OrderItem ordI1 = new OrderItemImpl("Bike",6,200.00);
+		OrderItem ordI2 = new OrderItemImpl("Car",1,200000.00);
+		orderItem.add(ordI1);
+		orderItem.add(ordI2);
+		ord1.setOrderItems(orderItem);		
+		orderList.add(ord1);*/
+		
+		///DONE\\\\
+		return orderSubsystem.getOrderHistory();
+	}
+
+	@Override
+	public void setShippingAddressInCart(Address addr) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setBillingAddressInCart(Address addr) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPaymentInfoInCart(CreditCard cc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void submitOrder() throws BackendException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void refreshAfterSubmit() throws BackendException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ShoppingCartSubsystem getShoppingCart() {
+		/*Sttubing*/		
+		return shoppingCartSubsystem;
+	}
+
+	@Override
+	public void saveShoppingCart() throws BackendException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void checkCreditCard(CreditCard cc) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public DbClassAddressForTest getGenericDbClassAddress() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CustomerProfile getGenericCustomerProfile() {
+		/*suttubing*/
+		CustomerProfile custPro = new CustomerProfileImpl(1,"Mamadou","DIARRA");
+		return custPro;
 	}
 }
