@@ -11,9 +11,12 @@ import business.externalinterfaces.Address;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerSubsystem;
 import business.externalinterfaces.ShoppingCartSubsystem;
+import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
 
 public enum CheckoutController  {
 	INSTANCE;
+	CustomerSubsystem cust = 
+			(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 	
 	private static final Logger LOG = Logger.getLogger(CheckoutController.class
 			.getPackage().getName());
@@ -21,22 +24,26 @@ public enum CheckoutController  {
 	
 	public void runShoppingCartRules() throws RuleException, BusinessException {
 		//implement
-		
+		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
+		 sc.runShoppingCartRules();	
 	}
 	
 	public void runPaymentRules(Address addr, CreditCard cc) throws RuleException, BusinessException {
 		//implement
+		cust.runPaymentRules(addr, cc);
 	}
 	
 	public Address runAddressRules(Address addr) throws RuleException, BusinessException {
-		CustomerSubsystem cust = 
-			(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+	
 		return cust.runAddressRules(addr);
 	}
 	
 	/** Asks the ShoppingCart Subsystem to run final order rules */
 	public void runFinalOrderRules(ShoppingCartSubsystem scss) throws RuleException, BusinessException {
 		//implement
+		
+		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
+		 sc.runFinalOrderRules();	
 	}
 	
 	/** Asks Customer Subsystem to check credit card against 
@@ -44,6 +51,8 @@ public enum CheckoutController  {
 	 */
 	public void verifyCreditCard() throws BusinessException {
 		//implement
+		ShoppingCartSubsystem sc=  ShoppingCartSubsystemFacade.INSTANCE;
+		cust.checkCreditCard(sc.getLiveCart().getPaymentInfo()); 
 	}
 	
 	public void saveNewAddress(Address addr) throws BackendException {
