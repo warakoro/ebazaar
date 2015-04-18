@@ -83,7 +83,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	}
 	void loadDefaultPaymentInfo() throws BackendException {
 		//implement
-		//added new method in DbClassaddress for this method
+		//Created new Class DbClassPayment for this to work
 		//DONE\\
 		try {
     		DbClassPayment dbclass = new DbClassPayment();
