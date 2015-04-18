@@ -20,6 +20,7 @@ import business.ordersubsystem.OrderSubsystemFacade;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
 
 public class CustomerSubsystemFacade implements CustomerSubsystem {
+	//private static final Logger LOG = Logger.getLogger(CustomerSubsystemFacade.class.getPackage().getName(), null);
 	ShoppingCartSubsystem shoppingCartSubsystem;
 	OrderSubsystem orderSubsystem;
 	List<Order> orderHistory;
@@ -35,7 +36,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	 * after login*/
     public void initializeCustomer(Integer id, int authorizationLevel) 
     		throws BackendException {
-	    boolean isAdmin = (authorizationLevel >= 1);
+    	boolean isAdmin = (authorizationLevel >= 1);
 		loadCustomerProfile(id, isAdmin);
 		loadDefaultShipAddress();
 		loadDefaultBillAddress();
@@ -52,25 +53,52 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 			dbclass.readCustomerProfile(id);
 			customerProfile = dbclass.getCustomerProfile();
 			customerProfile.setIsAdmin(isAdmin);
+
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
     }
     void loadDefaultShipAddress() throws BackendException {
     	//implement
+    	/////DONE\\\\\    	
+    	try {
+    		DbClassAddress dbclass = new DbClassAddress();
+			dbclass.readDefaultShipAddress(customerProfile);
+			defaultShipAddress = dbclass.getDefaultShipAddress();
+		} catch (DatabaseException e) {
+			throw new BackendException(e);
+		}
+    	
     }
 	void loadDefaultBillAddress() throws BackendException {
-		//implement
+	//implement
+	/////DONE\\\\\    	
+    	try {
+    		DbClassAddress dbclass = new DbClassAddress();
+			dbclass.readDefaultBillAddress(customerProfile);
+			defaultBillAddress = dbclass.getDefaultBillAddress();
+		} catch (DatabaseException e) {
+			throw new BackendException(e);
+		}
 	}
 	void loadDefaultPaymentInfo() throws BackendException {
 		//implement
+		//added new method in DbClassaddress for this method
+		//DONE\\
+		try {
+    		DbClassPayment dbclass = new DbClassPayment();
+			dbclass.readDefaultPaymentInfo(customerProfile);
+			defaultPaymentInfo = dbclass.getDefaultPaymentInfo();
+		} catch (DatabaseException e) {
+			throw new BackendException(e);
+		}
+		
 	}
 	void loadOrderData() throws BackendException {
-
-		// retrieve the order history for the customer and store here
-		orderSubsystem = new OrderSubsystemFacade(customerProfile);
-		//orderHistory = orderSubsystem.getOrderHistory();
 		
+		// retrieve the order history for the customer and store here
+		//DONE\\
+		orderSubsystem = new OrderSubsystemFacade(customerProfile);
 	
 	}
     /**
