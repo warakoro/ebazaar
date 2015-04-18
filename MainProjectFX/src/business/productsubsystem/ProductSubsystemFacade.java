@@ -71,5 +71,36 @@ public class ProductSubsystemFacade implements ProductSubsystem {
 	public int readQuantityAvailable(Product product) {
 		//IMPLEMENT
 		return 5;
+		
+		
+	}
+	@Override
+	public Catalog getCatalogFromName(String catName) throws BackendException {
+		// stubbing
+		CatalogTypesImpl cat = new CatalogTypesImpl();
+		int i = cat.getCatalogId(catName);
+		return cat.getCatalogs().get(i);
+	}
+	@Override
+	public void saveNewCatalog(Catalog catalog) throws BackendException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void saveNewProduct(Product product) throws BackendException {
+		// TODO Auto-generated method stub
+		
+		
+	}
+	@Override
+	public void deleteProduct(Product product) throws BackendException {
+		// TODO Auto-generated method stub
+	
+		
+	}
+	@Override
+	public void deleteCatalog(Catalog catalog) throws BackendException {
+		// TODO Auto-generated method stub
+		
 	}
 }
