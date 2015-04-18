@@ -56,15 +56,14 @@ public enum CheckoutController  {
 	}
 	
 	public void saveNewAddress(Address addr) throws BackendException {
-		CustomerSubsystem cust = 
-			(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);			
+				
 		cust.saveNewAddress(addr);
 	}
 	
 	/** Asks Customer Subsystem to submit final order */
 	public void submitFinalOrder() throws BackendException {
 		//implement
+		cust.submitOrder();
 	}
-
 
 }
