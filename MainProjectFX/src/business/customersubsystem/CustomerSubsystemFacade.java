@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import middleware.exceptions.DatabaseException;
+import middleware.exceptions.MiddlewareException;
+import middleware.externalinterfaces.CreditVerification;
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
 import business.exceptions.RuleException;
@@ -15,6 +17,7 @@ import business.externalinterfaces.DbClassAddressForTest;
 import business.externalinterfaces.Order;
 import business.externalinterfaces.OrderSubsystem;
 import business.externalinterfaces.Rules;
+import business.externalinterfaces.ShoppingCart;
 import business.externalinterfaces.ShoppingCartSubsystem;
 import business.ordersubsystem.OrderSubsystemFacade;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
@@ -28,6 +31,8 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	AddressImpl defaultBillAddress;
 	CreditCardImpl defaultPaymentInfo;
 	CustomerProfileImpl customerProfile;
+	CreditVerification creditVerification;
+	ShoppingCart shoppingCart;
 	
 	
 	/** Use for loading order history,
@@ -233,8 +238,9 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 
 	@Override
 	public void refreshAfterSubmit() throws BackendException {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		//Reload the order data
+		loadOrderData();
 	}
 
 	@Override
@@ -253,21 +259,25 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 
 	@Override
 	public void checkCreditCard(CreditCard cc) throws BusinessException {
-		// TODO Auto-generated method stub
-		
+		//
+		//verifying credit card
+		try {
+			creditVerification.checkCreditCard(customerProfile, defaultBillAddress, cc, shoppingCart.getTotalPrice());
+		} catch (MiddlewareException e) {
+			e.printStackTrace();
+		}
 	}
 
+	//TESTING
 	@Override
 	public DbClassAddressForTest getGenericDbClassAddress() {
-		// TODO Auto-generated method stub
-		return null;
+		///DONE\\\
+		return new DbClassAddress();
 	}
 
 	@Override
 	public CustomerProfile getGenericCustomerProfile() {
 		///DONE\\\
-		/*suttubing
-		CustomerProfile custPro = new CustomerProfileImpl(1,"Mamadou","DIARRA");*/
-		return this.customerProfile;
+		return new CustomerProfileImpl(1, "FirstTest", "LastTest");
 	}
 }
