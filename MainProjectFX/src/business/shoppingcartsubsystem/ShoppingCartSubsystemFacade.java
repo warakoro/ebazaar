@@ -131,7 +131,7 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 			throw new BackendException(e);
 		}
 		
-	}f
+	}
 
 	@Override
 	public void runShoppingCartRules() throws RuleException, BusinessException {
