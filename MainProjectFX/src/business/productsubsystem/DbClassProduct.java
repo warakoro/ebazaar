@@ -131,6 +131,17 @@ class DbClassProduct implements DbClass {
 	public void saveNewProduct(ProductFromGui product, Integer catalogid,
 			String description) throws DatabaseException {
 		//implement
+		//saves new produt details entered from the GUI.
+		try {
+		ProductSubsystemFacade pfacade = new ProductSubsystemFacade();
+		int i = Integer.parseInt(product.getProductName());
+		CatalogTypesImpl cat = new CatalogTypesImpl();
+		String catalogName = cat.getCatalogName(catalogid);
+		ProductSubsystemFacade.createProduct(pfacade.getCatalogFromName(catalogName), i, product.getProductName(), Integer.parseInt(product.getQuantityAvail()), Double.parseDouble(product.getUnitPrice()), GuiUtils.localDateForString(product.getMfgDate()), description);
+	}
+		catch(Exception e) {
+			throw new DatabaseException(e);
+		}
 	}
 
 	public void populateEntity(ResultSet resultSet) throws DatabaseException {
