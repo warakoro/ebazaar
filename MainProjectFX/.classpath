@@ -2,10 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/MainProjectFX/jars/creditVerifSystem.jar"/>
-	<classpathentry kind="lib" path="/MainProjectFX/jars/jess.jar"/>
-	<classpathentry kind="lib" path="/MainProjectFX/jars/mysql-connector-java-5.1.20-bin.jar"/>
-	<classpathentry kind="lib" path="/MainProjectFX/jars/rulesencoding.jar"/>
-	<classpathentry kind="lib" path="/MainProjectFX/jars/rulesengine.jar"/>
+	<classpathentry kind="lib" path="/Users/Saleeman/Downloads/creditVerifSystem.jar"/>
+	<classpathentry kind="lib" path="/Users/Saleeman/Downloads/jess.jar"/>
+	<classpathentry kind="lib" path="/Users/Saleeman/Downloads/mysql-connector-java-5.1.20-bin.jar"/>
+	<classpathentry kind="lib" path="/Users/Saleeman/Downloads/rulesencoding.jar"/>
+	<classpathentry kind="lib" path="/Users/Saleeman/Downloads/rulesengine.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
