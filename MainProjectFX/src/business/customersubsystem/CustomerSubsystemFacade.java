@@ -145,14 +145,25 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	 * address in ship/bill window 
 	 */
     public List<Address> getAllAddresses() throws BackendException {
-    	/*Stubbing*/ 
-    	List<Address> listOfAddress = new ArrayList();
-    	Address add1 = new AddressImpl("1000 N 4th street", "Fairfield", "Iowa", "52557", false, true);
-    	Address add2 = new AddressImpl("1000 Bullington street", "New York City", "New York", "52557", false, true);
-    	listOfAddress.add(add1);
-    	listOfAddress.add(add2);
-    	return listOfAddress;
-    }
+		// ///DONE\\\\\
+    	//Check the query
+		List<Address> listOfAddress = new ArrayList<Address>();
+		try {
+			DbClassAddress dbclass = new DbClassAddress();
+			dbclass.readAllAddresses(customerProfile);
+			listOfAddress = dbclass.getAddressList();
+		} catch (DatabaseException e) {
+			throw new BackendException(e);
+		}
+		/*
+		 * Stubbing Address add1 = new AddressImpl("1000 N 4th street",
+		 * "Fairfield", "Iowa", "52557", false, true); Address add2 = new
+		 * AddressImpl("1000 Bullington street", "New York City", "New York",
+		 * "52557", false, true); listOfAddress.add(add1);
+		 * listOfAddress.add(add2);
+		 */
+		return listOfAddress;
+	}
 
 	public Address runAddressRules(Address addr) throws RuleException,
 			BusinessException {
@@ -190,44 +201,34 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 
 	@Override
 	public List<Order> getOrderHistory() throws BackendException {
-		/*Stubbing*/
-	/*	List<Order> orderList = new ArrayList();
-		Order ord1 = new OrderImpl();
-		ord1.setOrderId(1);
-		List<OrderItem> orderItem = new ArrayList();
-		OrderItem ordI1 = new OrderItemImpl("Bike",6,200.00);
-		OrderItem ordI2 = new OrderItemImpl("Car",1,200000.00);
-		orderItem.add(ordI1);
-		orderItem.add(ordI2);
-		ord1.setOrderItems(orderItem);		
-		orderList.add(ord1);*/
-		
+		/*implement*/
 		///DONE\\\\
 		return orderSubsystem.getOrderHistory();
 	}
 
 	@Override
 	public void setShippingAddressInCart(Address addr) {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+			this.shoppingCartSubsystem.setShippingAddress(addr);
 	}
 
 	@Override
 	public void setBillingAddressInCart(Address addr) {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		this.shoppingCartSubsystem.setBillingAddress(addr);
 	}
 
 	@Override
 	public void setPaymentInfoInCart(CreditCard cc) {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		this.shoppingCartSubsystem.setPaymentInfo(cc);
 	}
 
 	@Override
 	public void submitOrder() throws BackendException {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		//this operation is done by order subsystem
+		orderSubsystem.submitOrder(shoppingCartSubsystem.getLiveCart());
 	}
 
 	@Override
@@ -238,14 +239,16 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 
 	@Override
 	public ShoppingCartSubsystem getShoppingCart() {
-		/*Sttubing*/		
+		/*DONE*/
+		//***********check
 		return shoppingCartSubsystem;
 	}
 
 	@Override
 	public void saveShoppingCart() throws BackendException {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		///this operation is done by shoppingCard subsystem 
+		shoppingCartSubsystem.saveLiveCart();
 	}
 
 	@Override
@@ -262,8 +265,9 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 
 	@Override
 	public CustomerProfile getGenericCustomerProfile() {
-		/*suttubing*/
-		CustomerProfile custPro = new CustomerProfileImpl(1,"Mamadou","DIARRA");
-		return custPro;
+		///DONE\\\
+		/*suttubing
+		CustomerProfile custPro = new CustomerProfileImpl(1,"Mamadou","DIARRA");*/
+		return this.customerProfile;
 	}
 }
