@@ -131,21 +131,24 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 			throw new BackendException(e);
 		}
 		
-	}
+	}f
 
-//	@Override
-//	public void runShoppingCartRules() throws RuleException, BusinessException {
-//		// TODO Auto-generated method stub
-//		Rules transferObject = new RulesShoppingCart(liveCart);
-//				transferObject.runRules();
-//		
-//	}
-//
-//	@Override
-//	public void runFinalOrderRules() throws RuleException, BusinessException {
-//		// TODO Auto-generated method stub
+	@Override
+	public void runShoppingCartRules() throws RuleException, BusinessException {
+		// TODO Auto-generated method stub
+		Rules transferObject = new RulesShoppingCart(liveCart);
+				transferObject.runRules();
 		
 	}
+
+	@Override
+	public void runFinalOrderRules() throws RuleException, BusinessException {
+		// TODO Auto-generated method stub
+		Rules transferObject = new RulesFinalOrder(liveCart);
+		transferObject.runRules();
+		
+	}
+}
 	
 	
 
