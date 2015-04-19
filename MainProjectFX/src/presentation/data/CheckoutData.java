@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import business.BusinessConstants;
+import business.SessionCache;
 import business.customersubsystem.CustomerSubsystemFacade;
 import business.externalinterfaces.Address;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerProfile;
+import business.externalinterfaces.CustomerSubsystem;
 import business.usecasecontrol.BrowseAndSelectController;
+import business.usecasecontrol.CheckoutController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import presentation.gui.GuiConstants;
@@ -33,6 +37,17 @@ public enum CheckoutData {
 	//Customer Bill Address Data
 	private ObservableList<CustomerPres> billAddresses = loadBillAddresses();
 	
+	private List<CustomerPres> getShipAddresses(){
+				List<Address> shipAdresses = CheckoutController.INSTANCE.retrieveShippingAddresses();
+				CustomerSubsystem cust = 
+						(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+				//transform to customerPres
+				List<CustomerPres> customerPresenter = shipAdresses.stream().map(customerPres ->{
+					return new CustomerPres(cust.getCustomerProfile(),customerPres); 
+				}).collect(Collectors.toList());
+				return customerPresenter;
+			}
+	
 	private ObservableList<CustomerPres> loadShipAddresses() {		
 	    List<CustomerPres> list = DefaultData.CUSTS_ON_FILE
 						   .stream()
@@ -40,7 +55,7 @@ public enum CheckoutData {
 						   .collect(Collectors.toList());
 		return FXCollections.observableList(list);		
 		//DB Data	
-//					List<CustomerPres> list = CheckoutController.INSTANCE.retrieveShippingAddresses();
+		//List<CustomerPres> list = CheckoutController.INSTANCE.retrieveShippingAddresses();
 		
 										   
 	}
@@ -50,7 +65,7 @@ public enum CheckoutData {
 				   .filter(cust -> cust.getAddress().isBillingAddress())
 				   .collect(Collectors.toList());
 		//DB Data
-				//	List<CustomerPres> list = CheckoutController.INSTANCE.retrieveBillingAddresses()
+		//List<CustomerPres> list = CheckoutController.INSTANCE.retrieveBillingAddresses()
 		
 		
 		return FXCollections.observableList(list);
