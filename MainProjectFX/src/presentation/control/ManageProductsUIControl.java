@@ -1,8 +1,16 @@
 package presentation.control;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import business.exceptions.BackendException;
+import business.externalinterfaces.Product;
+import business.productsubsystem.ProductSubsystemFacade;
 import presentation.data.CatalogPres;
+import presentation.data.DefaultData;
 import presentation.data.ManageProductsData;
 import presentation.data.ProductPres;
+import presentation.gui.AddProductPopup;
 import presentation.gui.MaintainCatalogsWindow;
 import presentation.gui.MaintainProductsWindow;
 import presentation.gui.MessageableWindow;
@@ -87,6 +95,58 @@ public enum ManageProductsUIControl {
 	}
 	public BackFromProdsButtonHandler getBackFromProdsButtonHandler() {
 		return new BackFromProdsButtonHandler();
+	}
+	
+	AddProductPopup addProdPopup;
+	ManageProductsData manageProductData; 
+	//getFor save product
+	public saveProduct saveProduct(){
+		return new saveProduct();
+	}
+	
+	// this connect AddProductPopUp to Data
+	private class saveProduct implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent e) {
+			//Rules should be managed in a more maintainable way
+			if(addProdPopup.getId().getText().trim().equals("")) {
+				addProdPopup.getMessageBar().setText("Product Id field must be nonempty! \n[Type '0' to auto-generate ID.]");
+			}
+			else if(addProdPopup.getName().getText().trim().equals("")) addProdPopup.getMessageBar().setText("Product Name field must be nonempty!");
+			else if(addProdPopup.getManufactureDate().getText().trim().equals("")) addProdPopup.getMessageBar().setText("Manufacture Date field must be nonempty!");
+			else if(addProdPopup.getNumAvail().getText().trim().equals("")) addProdPopup.getMessageBar().setText("Number in Stock field must be nonempty!");
+			else if(addProdPopup.getUnitPrice().getText().trim().equals("")) addProdPopup.getMessageBar().setText("Unit Price field must be nonempty!");
+			else if(addProdPopup.getDescription().getText().trim().equals("")) addProdPopup.getMessageBar().setText("Description field must be nonempty!");
+			else {
+				String idNewVal = addProdPopup.getId().getText();
+				if(idNewVal.equals("0")) {
+					idNewVal = DefaultData.generateId(100);
+				} //Catalog c, Integer pi, String pn, int qa, double up, LocalDate md, String d
+			
+			}
+			
+			//creating product
+			Product newProd = ProductSubsystemFacade.createProduct(DefaultData.CATALOG_MAP.get(addProdPopup.getCatalogName().getText()), 
+					Integer.parseInt(addProdPopup.getId().getText()), addProdPopup.getName().getText(), Integer.parseInt(addProdPopup.getNumAvail().getText()), 
+					    Double.parseDouble(addProdPopup.getUnitPrice().getText()), LocalDate.parse(addProdPopup.getManufactureDate().getText(), DateTimeFormatter.ofPattern("MM/dd/yyyy")), 
+					    addProdPopup.getDescription().getText());
+			ProductPres prodPres = new ProductPres();
+			prodPres.setProduct(newProd);
+			maintainProductsWindow.addItem(prodPres);
+			addProdPopup.getMessageBar().setText("");
+			addProdPopup.hide();
+			
+			//creating catalog press
+			CatalogPres catPres = new CatalogPres();
+
+			try {
+				manageProductData.addToProdList(catPres, prodPres);
+			} catch (BackendException e1) {
+				e1.printStackTrace();
+			}
+			
+
+		}
 	}
 
 

@@ -3,6 +3,7 @@ package presentation.gui;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import presentation.control.ManageProductsUIControl;
 import presentation.data.DefaultData;
 import presentation.data.ProductPres;
 import business.externalinterfaces.*;
@@ -32,6 +33,8 @@ public class AddProductPopup extends Popup {
 	TextField unitPrice = new TextField();
 	TextField description = new TextField();
 	
+	
+	
 	HBox sceneTitle;
 	HBox topLevel;
 	Text messageBar = new Text();
@@ -57,6 +60,7 @@ public class AddProductPopup extends Popup {
         setBackground(Color.KHAKI);
         setBorder();
         catalogName.setEditable(false);
+        //manageProductsUIControl = new ManageProductsUIControl(this);
         
 		this.maintainProductsWindow = maintainProductsWindow;
 		messageBar.setFill(Color.FIREBRICK);
@@ -108,31 +112,9 @@ public class AddProductPopup extends Popup {
 		
 	
 		addButton.setOnAction(evt -> {
-			//Rules should be managed in a more maintainable way
-			if(id.getText().trim().equals("")) {
-				messageBar.setText("Product Id field must be nonempty! \n[Type '0' to auto-generate ID.]");
-			}
-			else if(name.getText().trim().equals("")) messageBar.setText("Product Name field must be nonempty!");
-			else if(manufactureDate.getText().trim().equals("")) messageBar.setText("Manufacture Date field must be nonempty!");
-			else if(numAvail.getText().trim().equals("")) messageBar.setText("Number in Stock field must be nonempty!");
-			else if(unitPrice.getText().trim().equals("")) messageBar.setText("Unit Price field must be nonempty!");
-			else if(description.getText().trim().equals("")) messageBar.setText("Description field must be nonempty!");
-			else {
-				String idNewVal = id.getText();
-				if(idNewVal.equals("0")) {
-					idNewVal = DefaultData.generateId(100);
-				} //Catalog c, Integer pi, String pn, int qa, double up, LocalDate md, String d
-				Product newProd = ProductSubsystemFacade.createProduct(DefaultData.CATALOG_MAP.get(catalogName.getText()), 
-						Integer.parseInt(id.getText()), name.getText(), Integer.parseInt(numAvail.getText()), 
-						    Double.parseDouble(unitPrice.getText()), LocalDate.parse(manufactureDate.getText(), DateTimeFormatter.ofPattern("MM/dd/yyyy")), 
-						      description.getText());
-				ProductPres prodPres = new ProductPres();
-				prodPres.setProduct(newProd);
-				maintainProductsWindow.addItem(prodPres);
-				messageBar.setText("");
-				hide();
-			}	   
+			ManageProductsUIControl.INSTANCE.saveProduct();		   
 		});
+		
 		cancelButton.setOnAction(evt -> {
 			messageBar.setText("");
 			hide();
@@ -146,4 +128,62 @@ public class AddProductPopup extends Popup {
 	void setBackground(Color color) {
 		topLevel.backgroundProperty().set(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
 	}
+	
+	//getters and setter for field
+
+	public TextField getId() {
+		return id;
+	}
+	public void setId(TextField id) {
+		this.id = id;
+	}
+	public TextField getName() {
+		return name;
+	}
+	public void setName(TextField name) {
+		this.name = name;
+	}
+	public TextField getManufactureDate() {
+		return manufactureDate;
+	}
+	public void setManufactureDate(TextField manufactureDate) {
+		this.manufactureDate = manufactureDate;
+	}
+	public TextField getUnitPrice() {
+		return unitPrice;
+	}
+	public void setUnitPrice(TextField unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+	public TextField getNumAvail() {
+		return numAvail;
+	}
+	public void setNumAvail(TextField numAvail) {
+		this.numAvail = numAvail;
+	}
+	public TextField getCatalogName() {
+		return catalogName;
+	}
+	public void setCatalogName(TextField catalogName) {
+		this.catalogName = catalogName;
+	}
+	public TextField getDescription() {
+		return description;
+	}
+	public void setDescription(TextField description) {
+		this.description = description;
+	}
+	public Text getMessageBar() {
+		return messageBar;
+	}
+	public void setMessageBar(Text messageBar) {
+		this.messageBar = messageBar;
+	}
+	
+	
+	
+	
+	
+		
+	
 }

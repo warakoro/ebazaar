@@ -9,8 +9,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import business.CartItemData;
+import business.exceptions.BackendException;
 import business.externalinterfaces.*;
 import business.productsubsystem.ProductSubsystemFacade;
+import business.usecasecontrol.ManageProductsController;
 
 public enum ManageProductsData {
 	INSTANCE;
@@ -54,26 +56,30 @@ public enum ManageProductsData {
 		return prodPres;
 	}
 	
-	public void addToProdList(CatalogPres catPres, ProductPres prodPres) {
-		ObservableList<ProductPres> newProducts =
-		           FXCollections.observableArrayList(prodPres);
-		List<ProductPres> specifiedProds = productsMap.get(catPres);
-		
-		//Place the new item at the bottom of the list
-		specifiedProds.addAll(newProducts);
+	public void addToProdList(CatalogPres catPres, ProductPres prodPres) throws BackendException {
+		ManageProductsController mpc = new ManageProductsController();
+		mpc.addProduct(prodPres.getProduct(), catPres.getCatalog());
+//		ObservableList<ProductPres> newProducts =
+//		           FXCollections.observableArrayList(prodPres);
+//		List<ProductPres> specifiedProds = productsMap.get(catPres);
+//		
+//		//Place the new item at the bottom of the list
+//		specifiedProds.addAll(newProducts);
 	}
 	
 	/** This method looks for the 0th element of the toBeRemoved list 
 	 *  and if found, removes it. In this app, removing more than one product at a time
 	 *  is  not supported.
 	 */
-	public boolean removeFromProductList(CatalogPres cat, ObservableList<ProductPres> toBeRemoved) {
-		if(toBeRemoved != null && !toBeRemoved.isEmpty()) {
-			boolean result = productsMap.get(cat).remove(toBeRemoved.get(0));
-			return result;
-		}
-		return false;
-	}
+//	public boolean removeFromProductList(CatalogPres cat, P) {
+//		ManageProductsController	mpc = new ManageProductsController();
+//		Pr
+//		if(mpc.getProductsList(cat.getCatalog())!= null && !mpc.getProductsList(cat.getCatalog()).isEmpty()) {
+//			boolean result = mpc.getProductsList(cat.getCatalog()).remove(o)
+//			return result;
+//		}
+//		return false;
+//	}
 		
 	//////// Catalogs List model
 	private ObservableList<CatalogPres> catalogList = readCatalogsFromDataSource();
