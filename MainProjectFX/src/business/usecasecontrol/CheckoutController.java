@@ -1,6 +1,9 @@
 package business.usecasecontrol;
 
 import java.util.logging.Logger;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import business.BusinessConstants;
 import business.SessionCache;
@@ -12,6 +15,8 @@ import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerSubsystem;
 import business.externalinterfaces.ShoppingCartSubsystem;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
+
+
 
 public enum CheckoutController  {
 	INSTANCE;
@@ -65,5 +70,29 @@ public enum CheckoutController  {
 		//implement
 		cust.submitOrder();
 	}
+	
+	public List<Address> retrieveShippingAddresses(){
+				try {
+					List<Address> shippingAddresses = cust.getAllAddresses();
+					
+					return shippingAddresses.stream().filter(address -> address.isShippingAddress()).collect(Collectors.toList());
+				} catch (BackendException e) {
+					// TODO Auto-generated catch block
+					LOG.severe("Error: Could not retrieve shipping addresses");
+				}
+				return new ArrayList<>();
+			}
+			
+			public List<Address> retrieveBillingAddresses(){
+				try {
+					List<Address> billingAddresses = cust.getAllAddresses();
+					
+					return billingAddresses.stream().filter(address -> address.isBillingAddress()).collect(Collectors.toList());
+				} catch (BackendException e) {
+					// TODO Auto-generated catch block
+					LOG.severe("Error: Could not retrieve billing addresses");
+				}
+				return new ArrayList<>();
+			}
 
 }
