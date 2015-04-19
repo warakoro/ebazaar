@@ -83,15 +83,14 @@ public interface ShoppingCartSubsystem {
       *  rules concerning validity of shopping cart are run
       *  (for instance, user may not have an empty cart)
       */	
+	public void runShoppingCartRules() throws RuleException, BusinessException;
 	
-	//Need to ask Dr.Corazza about how stubbing Rules would work. Not sure why FinalOrderRules are here actually.
-//	public void runShoppingCartRules() throws RuleException, BusinessException;
-//
-//	/** 
-//       *  Invoked when user attempts to submit final order
-//      *  -- rules are run to check validity of the order
-//      *  (for example, quantity available for each product order
-//      *  will be checked against quantity requested)
-//     */
-//   public void runFinalOrderRules() throws RuleException, BusinessException;
+
+	/** 
+       *  Invoked when user attempts to submit final order
+      *  -- rules are run to check validity of the order
+      *  (for example, quantity available for each product order
+      *  will be checked against quantity requested)
+    */
+  public void runFinalOrderRules() throws RuleException, BusinessException;
 }
