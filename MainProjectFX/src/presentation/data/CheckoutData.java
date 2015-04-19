@@ -38,7 +38,10 @@ public enum CheckoutData {
 						   .stream()
 						   .filter(cust -> cust.getAddress().isShippingAddress())
 						   .collect(Collectors.toList());
-		return FXCollections.observableList(list);				   
+		return FXCollections.observableList(list);		
+		//DB Data	
+//					List<CustomerPres> list = CheckoutController.INSTANCE.retrieveShippingAddresses();
+		
 										   
 	}
 	private ObservableList<CustomerPres> loadBillAddresses() {
@@ -46,6 +49,10 @@ public enum CheckoutData {
 				   .stream()
 				   .filter(cust -> cust.getAddress().isBillingAddress())
 				   .collect(Collectors.toList());
+		//DB Data
+				//	List<CustomerPres> list = CheckoutController.INSTANCE.retrieveBillingAddresses()
+		
+		
 		return FXCollections.observableList(list);
 	}
 	public ObservableList<CustomerPres> getCustomerShipAddresses() {
