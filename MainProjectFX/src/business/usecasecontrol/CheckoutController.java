@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+
+
 import business.BusinessConstants;
 import business.SessionCache;
 import business.exceptions.BackendException;
@@ -15,7 +17,7 @@ import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerSubsystem;
 import business.externalinterfaces.ShoppingCartSubsystem;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
-
+import presentation.data.BrowseSelectData;
 
 
 public enum CheckoutController  {
@@ -69,11 +71,15 @@ public enum CheckoutController  {
 	}
 	
 	/** Asks Customer Subsystem to submit final order */
+	
 	public void submitFinalOrder() throws BackendException {
-		//implement
-		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		// implement
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+				.get(BusinessConstants.CUSTOMER);
+		BrowseSelectData.INSTANCE.updateShoppingCart();
 		cust.submitOrder();
 	}
+	
 	
 	public List<Address> retrieveShippingAddresses() {
 		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
