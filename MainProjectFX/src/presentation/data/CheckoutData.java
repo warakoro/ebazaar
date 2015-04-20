@@ -41,7 +41,7 @@ public enum CheckoutData {
 				List<Address> shipAdresses = CheckoutController.INSTANCE.retrieveShippingAddresses();
 				CustomerSubsystem cust = 
 						(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
-				//transform to customerPres
+				//customerPres
 				List<CustomerPres> customerPresenter = shipAdresses.stream().map(customerPres ->{
 					return new CustomerPres(cust.getCustomerProfile(),customerPres); 
 				}).collect(Collectors.toList());
@@ -55,19 +55,30 @@ public enum CheckoutData {
 						   .collect(Collectors.toList());
 		return FXCollections.observableList(list);		
 		//DB Data	
-		//List<CustomerPres> list = CheckoutController.INSTANCE.retrieveShippingAddresses();
+//		List<CustomerPres> list = getShipAddresses();
 		
 										   
 	}
+	
+	private List<CustomerPres> getBillAddresses(){
+		List<Address> billAddresses = CheckoutController.INSTANCE.retrieveBillingAddresses();
+		CustomerSubsystem cust = 
+				(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		//customerPres
+		List<CustomerPres> customerPresenter = billAddresses.stream().map(customerPres ->{
+			return new CustomerPres(cust.getCustomerProfile(),customerPres); 
+		}).collect(Collectors.toList());
+		return customerPresenter;
+	}
+	
 	private ObservableList<CustomerPres> loadBillAddresses() {
 		List list = DefaultData.CUSTS_ON_FILE
 				   .stream()
 				   .filter(cust -> cust.getAddress().isBillingAddress())
 				   .collect(Collectors.toList());
 		//DB Data
-		//List<CustomerPres> list = CheckoutController.INSTANCE.retrieveBillingAddresses()
-		
-		
+		//List<CustomerPres> list = getBillAddresses();
+			
 		return FXCollections.observableList(list);
 	}
 	public ObservableList<CustomerPres> getCustomerShipAddresses() {

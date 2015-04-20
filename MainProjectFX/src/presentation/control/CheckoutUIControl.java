@@ -254,7 +254,7 @@ public enum CheckoutUIControl {
 			try {
 				CheckoutController.INSTANCE.runPaymentRules(shippingBillingWindow.getBillingAddress(),
 					paymentWindow.getCreditCardFromWindow());
-				//CheckoutController.INSTANCE.verifyCreditCard();
+				CheckoutController.INSTANCE.verifyCreditCard();
 				paymentWindow.clearMessages();
 				paymentWindow.hide();
 				termsWindow = new TermsWindow();
