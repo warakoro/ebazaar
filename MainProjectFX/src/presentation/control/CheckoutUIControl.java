@@ -180,7 +180,7 @@ public enum CheckoutUIControl {
 								.saveNewAddress(cleansedShipAddress);
 					} catch (BackendException e) {
 						shippingBillingWindow
-								.displayError("New shipping address not saved. Message: "
+								.displayError("New shipping address could not be saved. Message: "
 										+ e.getMessage());
 						rulesOk = false;
 					}
@@ -191,7 +191,7 @@ public enum CheckoutUIControl {
 								.saveNewAddress(cleansedBillAddress);
 					} catch (BackendException e) {
 						shippingBillingWindow
-								.displayError("New billing address not saved. Message: "
+								.displayError("New billing address could not be saved. Message: "
 										+ e.getMessage());
 						rulesOk = false;
 					}
@@ -274,20 +274,28 @@ public enum CheckoutUIControl {
 				CheckoutController.INSTANCE
 						.setPaymentOnLiveCart(paymentWindow
 								.getCreditCardFromWindow());
-				// CheckoutController.INSTANCE.verifyCreditCard();
 
-				paymentWindow.clearMessages();
-				paymentWindow.hide();
-				termsWindow = new TermsWindow();
-				termsWindow.show();
 			} catch (RuleException e) {
 				paymentWindow.displayError(e.getMessage());
 			} catch (BusinessException e) {
 				paymentWindow.displayError(ErrorMessages.DATABASE_ERROR);
 			}
+			
+			 try {
+				CheckoutController.INSTANCE.verifyCreditCard();
+				paymentWindow.clearMessages();
+				paymentWindow.hide();
+				termsWindow = new TermsWindow();
+				termsWindow.show();
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				LOG.severe(e.getMessage());
+				paymentWindow.displayError(e.getMessage());
+			}
+
+			
 		}
 	}
-
 
 	public ProceedToTermsHandler getProceedToTermsHandler() {
 		return new ProceedToTermsHandler();
