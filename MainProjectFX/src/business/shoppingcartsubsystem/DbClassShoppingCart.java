@@ -17,6 +17,8 @@ import middleware.externalinterfaces.DbClass;
 import middleware.externalinterfaces.DbConfigKey;
 import business.customersubsystem.CustomerSubsystemFacade;
 import business.exceptions.BackendException;
+import business.externalinterfaces.DbClassAddressForTest;
+import business.externalinterfaces.DbClassShoppingCartForTest;
 import business.externalinterfaces.Address;
 import business.externalinterfaces.CartItem;
 import business.externalinterfaces.CreditCard;
@@ -303,23 +305,22 @@ public class DbClassShoppingCart implements DbClass {
     			String num  = rs.getString("cardnum");
     			String type = rs.getString("cardtype");
     			String exp  = rs.getString("expdate");
-    			creditCard = 
-    				CustomerSubsystemFacade.createCreditCard(name, num, type, exp);
+    			creditCard 
+    			  = CustomerSubsystemFacade.createCreditCard(name, exp, num, type);
+    				
     			
     			//load cart
     			cartImpl.setCartId((new Integer(rs.getInt("shopcartid")).toString()));
     			cartImpl.setShipAddress(shippingAddress);
     			cartImpl.setBillAddress(billingAddress);
     			cartImpl.setPaymentInfo(creditCard);
-    			
-    			
     		}
     	}
     	catch(SQLException e){
             throw new DatabaseException(e);
         } 
-    	
     }
+
     private void populateCartItemsList(ResultSet rs) throws BackendException {
     	CartItem cartItem = null;
         cartItemsList= new LinkedList<CartItem>();
