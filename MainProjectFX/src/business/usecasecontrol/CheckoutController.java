@@ -119,6 +119,3 @@ public enum CheckoutController  {
 	}
 
 }
-			
-
-

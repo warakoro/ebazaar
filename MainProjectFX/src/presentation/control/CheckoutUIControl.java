@@ -172,7 +172,7 @@ public enum CheckoutUIControl {
 					try {
 						CheckoutController.INSTANCE.saveNewAddress(cleansedShipAddress);
 					} catch(BackendException e) {
-						shippingBillingWindow.displayError("New shipping address not saved. Message: " 
+						shippingBillingWindow.displayError("New Shipping address could not be saved. Message: " 
 							+ e.getMessage());
 					}
 				}
@@ -180,10 +180,13 @@ public enum CheckoutUIControl {
 					try {
 						CheckoutController.INSTANCE.saveNewAddress(cleansedBillAddress);
 					} catch(BackendException e) {
-						shippingBillingWindow.displayError("New billing address not saved. Message: " 
+						shippingBillingWindow.displayError("New billing address could not be saved. Message: " 
 							+ e.getMessage());
 					}
 				}
+				CheckoutController.INSTANCE.setBillingShippingOnLiveCart(
+						shippingBillingWindow.getBillingAddress(),
+						shippingBillingWindow.getShippingAddress());
 				paymentWindow = new PaymentWindow();
 				paymentWindow.show();
 				shippingBillingWindow.hide();
@@ -191,7 +194,6 @@ public enum CheckoutUIControl {
 		}
 	}
 	
-
 	public ProceedToPaymentHandler getProceedToPaymentHandler() {
 		return new ProceedToPaymentHandler();
 	}
@@ -345,7 +347,7 @@ public enum CheckoutUIControl {
 		return new ToShoppingCartFromFinalOrderHandler();
 	}
 
-	// handlers for OrderCompleteWindow
+	// handlers for OrderCompleteWindow 
 
 	private class ContinueFromOrderCompleteHandler implements
 			EventHandler<ActionEvent> {
