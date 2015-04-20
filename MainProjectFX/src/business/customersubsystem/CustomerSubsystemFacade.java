@@ -2,8 +2,13 @@ package business.customersubsystem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import middleware.exceptions.DatabaseException;
+import middleware.exceptions.MiddlewareException;
+import middleware.externalinterfaces.CreditVerification;
+import business.BusinessConstants;
+import business.SessionCache;
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
 import business.exceptions.RuleException;
@@ -15,18 +20,22 @@ import business.externalinterfaces.DbClassAddressForTest;
 import business.externalinterfaces.Order;
 import business.externalinterfaces.OrderSubsystem;
 import business.externalinterfaces.Rules;
+import business.externalinterfaces.ShoppingCart;
 import business.externalinterfaces.ShoppingCartSubsystem;
 import business.ordersubsystem.OrderSubsystemFacade;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
 
 public class CustomerSubsystemFacade implements CustomerSubsystem {
+	private static final Logger LOG = Logger.getLogger(CustomerSubsystemFacade.class.getPackage().getName(), null);
 	ShoppingCartSubsystem shoppingCartSubsystem;
-	OrderSubsystem orderSubsystem;
+	OrderSubsystem orderSubsystem ;
 	List<Order> orderHistory;
 	AddressImpl defaultShipAddress;
 	AddressImpl defaultBillAddress;
 	CreditCardImpl defaultPaymentInfo;
 	CustomerProfileImpl customerProfile;
+	CreditVerification creditVerification;
+	ShoppingCart shoppingCart;
 	
 	
 	/** Use for loading order history,
@@ -35,43 +44,85 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	 * after login*/
     public void initializeCustomer(Integer id, int authorizationLevel) 
     		throws BackendException {
-	    boolean isAdmin = (authorizationLevel >= 1);
+    	boolean isAdmin = (authorizationLevel >= 1);
 		loadCustomerProfile(id, isAdmin);
 		loadDefaultShipAddress();
 		loadDefaultBillAddress();
 		loadDefaultPaymentInfo();
+		loadOrderData();
 		shoppingCartSubsystem = ShoppingCartSubsystemFacade.INSTANCE;
 		shoppingCartSubsystem.setCustomerProfile(customerProfile);
 		shoppingCartSubsystem.retrieveSavedCart();
-		loadOrderData();
+		SessionCache.getInstance().add(BusinessConstants.CUSTOMER, this);
     }
     
     void loadCustomerProfile(int id, boolean isAdmin) throws BackendException {
     	try {
+    		LOG.info("Uploading Customer Profile in the memory");
 			DbClassCustomerProfile dbclass = new DbClassCustomerProfile();
 			dbclass.readCustomerProfile(id);
 			customerProfile = dbclass.getCustomerProfile();
 			customerProfile.setIsAdmin(isAdmin);
+			
+			//adding the customer profile to the memory
+			this.setCustomerProfile(customerProfile);
+
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
     }
     void loadDefaultShipAddress() throws BackendException {
     	//implement
+    	/////DONE\\\\\    	
+    	try {
+    		LOG.info("Uploading Default Shipping address in the memory");
+
+    		DbClassAddress dbclass = new DbClassAddress();
+			dbclass.readDefaultShipAddress(customerProfile);
+			defaultShipAddress = dbclass.getDefaultShipAddress();
+			this.setShippingAddressInCart(defaultShipAddress);
+		} catch (DatabaseException e) {
+			throw new BackendException(e);
+		}
+    	
     }
 	void loadDefaultBillAddress() throws BackendException {
-		//implement
+	//implement
+	/////DONE\\\\\    	
+    	try {
+    		LOG.info("Uploading Default Billing address in to the memory");
+    		DbClassAddress dbclass = new DbClassAddress();
+			dbclass.readDefaultBillAddress(customerProfile);
+			defaultBillAddress = dbclass.getDefaultBillAddress();
+			this.setBillingAddressInCart(defaultBillAddress);
+		} catch (DatabaseException e) {
+			throw new BackendException(e);
+		}
 	}
 	void loadDefaultPaymentInfo() throws BackendException {
 		//implement
+		//Created new Class DbClassPayment for this to work
+		//DONE\\
+		try {
+    		LOG.info("Uploading Default payment info in to the memory");
+    		DbClassPayment dbclass = new DbClassPayment();
+			dbclass.readDefaultPaymentInfo(customerProfile);
+			defaultPaymentInfo = dbclass.getDefaultPaymentInfo();
+			this.setPaymentInfoInCart(defaultPaymentInfo);
+		} catch (DatabaseException e) {
+			throw new BackendException(e);
+		}
+		
 	}
 	void loadOrderData() throws BackendException {
-
-		// retrieve the order history for the customer and store here
-		orderSubsystem = new OrderSubsystemFacade(customerProfile);
-		//orderHistory = orderSubsystem.getOrderHistory();
 		
-	
+		// Working with stubbing for OrderSubsysem
+		//DONE\\
+		
+		LOG.info("Uploading order Data in to memory");
+		orderSubsystem = new OrderSubsystemFacade(customerProfile);
+		orderHistory = orderSubsystem.getOrderHistory();
+		this.setOrderHistory(orderHistory);
 	}
     /**
      * Returns true if user has admin access
@@ -95,36 +146,32 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		}
     }
     
-    public CustomerProfile getCustomerProfile() {
-
-		return customerProfile;
-	}
-
-	public Address getDefaultShippingAddress() {
-		return defaultShipAddress;
-	}
-
-	public Address getDefaultBillingAddress() {
-		return defaultBillAddress;
-	}
-	public CreditCard getDefaultPaymentInfo() {
-		return defaultPaymentInfo;
-	}
- 
     
-    /** 
+   
+	/** 
      * Use to supply all stored addresses of a customer when he wishes to select an
 	 * address in ship/bill window 
 	 */
     public List<Address> getAllAddresses() throws BackendException {
-    	/*Stubbing*/ 
-    	List<Address> listOfAddress = new ArrayList();
-    	Address add1 = new AddressImpl("1000 N 4th street", "Fairfield", "Iowa", "52557", false, true);
-    	Address add2 = new AddressImpl("1000 Bullington street", "New York City", "New York", "52557", false, true);
-    	listOfAddress.add(add1);
-    	listOfAddress.add(add2);
-    	return listOfAddress;
-    }
+		// ///DONE\\\\\
+    	//Check the query
+		List<Address> listOfAddress = new ArrayList<Address>();
+		try {
+			DbClassAddress dbclass = new DbClassAddress();
+			dbclass.readAllAddresses(customerProfile);
+			listOfAddress = dbclass.getAddressList();
+		} catch (DatabaseException e) {
+			throw new BackendException(e);
+		}
+		/*
+		 * Stubbing Address add1 = new AddressImpl("1000 N 4th street",
+		 * "Fairfield", "Iowa", "52557", false, true); Address add2 = new
+		 * AddressImpl("1000 Bullington street", "New York City", "New York",
+		 * "52557", false, true); listOfAddress.add(add1);
+		 * listOfAddress.add(add2);
+		 */
+		return listOfAddress;
+	}
 
 	public Address runAddressRules(Address addr) throws RuleException,
 			BusinessException {
@@ -162,80 +209,130 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 
 	@Override
 	public List<Order> getOrderHistory() throws BackendException {
-		/*Stubbing*/
-	/*	List<Order> orderList = new ArrayList();
-		Order ord1 = new OrderImpl();
-		ord1.setOrderId(1);
-		List<OrderItem> orderItem = new ArrayList();
-		OrderItem ordI1 = new OrderItemImpl("Bike",6,200.00);
-		OrderItem ordI2 = new OrderItemImpl("Car",1,200000.00);
-		orderItem.add(ordI1);
-		orderItem.add(ordI2);
-		ord1.setOrderItems(orderItem);		
-		orderList.add(ord1);*/
-		
-		///DONE\\\\
-		return orderSubsystem.getOrderHistory();
+		///DONE\\\\	
+		CustomerSubsystemFacade customer = (CustomerSubsystemFacade) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		return customer.orderHistory;		
+	
 	}
 
 	@Override
 	public void setShippingAddressInCart(Address addr) {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		this.defaultShipAddress = (AddressImpl) addr;
 	}
 
 	@Override
 	public void setBillingAddressInCart(Address addr) {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		this.defaultBillAddress = (AddressImpl) addr;
 	}
 
 	@Override
 	public void setPaymentInfoInCart(CreditCard cc) {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		this.defaultPaymentInfo = (CreditCardImpl) cc;
 	}
 
 	@Override
 	public void submitOrder() throws BackendException {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		//this operation is done by order subsystem
+		orderSubsystem.submitOrder(shoppingCartSubsystem.getLiveCart());
 	}
 
 	@Override
 	public void refreshAfterSubmit() throws BackendException {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		//Reload the order data
+		loadOrderData();
 	}
 
 	@Override
 	public ShoppingCartSubsystem getShoppingCart() {
-		/*Sttubing*/		
+		/*DONE*/
+		//***********check
 		return shoppingCartSubsystem;
 	}
 
 	@Override
 	public void saveShoppingCart() throws BackendException {
-		// TODO Auto-generated method stub
-		
+		///DONE\\\
+		///this operation is done by shoppingCard subsystem 
+		shoppingCartSubsystem.saveLiveCart();
 	}
 
 	@Override
 	public void checkCreditCard(CreditCard cc) throws BusinessException {
-		// TODO Auto-generated method stub
-		
+		//
+		//verifying credit card
+		try {
+			creditVerification.checkCreditCard(customerProfile, defaultBillAddress, cc, shoppingCart.getTotalPrice());
+		} catch (MiddlewareException e) {
+			e.printStackTrace();
+		}
 	}
 
+	//TESTING
 	@Override
 	public DbClassAddressForTest getGenericDbClassAddress() {
-		// TODO Auto-generated method stub
-		return null;
+		///DONE\\\
+		return new DbClassAddress();
 	}
 
 	@Override
 	public CustomerProfile getGenericCustomerProfile() {
-		/*suttubing*/
-		CustomerProfile custPro = new CustomerProfileImpl(1,"Mamadou","DIARRA");
-		return custPro;
+		///DONE\\\
+		return new CustomerProfileImpl(1, "FirstTest", "LastTest");
 	}
+	
+	
+	///Getters and Setters 
+	 public void setOrderHistory(List<Order> orderHistory) {
+			this.orderHistory = orderHistory;
+		}
+
+		public CustomerProfile getCustomerProfile() {
+
+			return customerProfile;
+		}
+
+		public Address getDefaultShippingAddress() {
+			return defaultShipAddress;
+		}
+
+		public Address getDefaultBillingAddress() {
+			return defaultBillAddress;
+		}
+		public CreditCard getDefaultPaymentInfo() {
+			return defaultPaymentInfo;
+		} 
+		public void setDefaultPaymentInfo(CreditCardImpl defaultPaymentInfo) {
+			this.defaultPaymentInfo = defaultPaymentInfo;
+		}
+	    
+	    public AddressImpl getDefaultShipAddress() {
+			return defaultShipAddress;
+		}
+
+		public void setDefaultShipAddress(AddressImpl defaultShipAddress) {
+			this.defaultShipAddress = defaultShipAddress;
+		}
+
+		public AddressImpl getDefaultBillAddress() {
+			return defaultBillAddress;
+		}
+
+		public void setDefaultBillAddress(AddressImpl defaultBillAddress) {
+			this.defaultBillAddress = defaultBillAddress;
+		}
+		
+
+		public void setCustomerProfile(CustomerProfileImpl customerProfile) {
+			this.customerProfile = customerProfile;
+		}
+
+		public void setShoppingCart(ShoppingCart shoppingCart) {
+			this.shoppingCart = shoppingCart;
+		}
+
 }

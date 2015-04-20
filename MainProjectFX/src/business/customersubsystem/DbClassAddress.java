@@ -78,14 +78,27 @@ class DbClassAddress implements DbClass, DbClassAddressForTest {
     }
 	
     void readDefaultShipAddress(CustomerProfile custProfile) throws DatabaseException {
-    	//implement     
+    	//implement
+    	///DONE\\\
+        this.custProfile = custProfile;
+         queryType=READ_DEFAULT_SHIP;
+         dataAccessSS.atomicRead(this);
     }
     void readDefaultBillAddress(CustomerProfile custProfile) throws DatabaseException {
     	//implement
+    	//DONE\\
+    	 this.custProfile = custProfile;
+         queryType=READ_DEFAULT_BILL;
+         dataAccessSS.atomicRead(this);
     }    
     public void readAllAddresses(CustomerProfile custProfile) throws DatabaseException {
-    	//implement         
+    	//implement
+    	//DONE\\ check query
+    	 this.custProfile = custProfile;
+         queryType=READ;
+         dataAccessSS.atomicRead(this);
     }
+    
     
         
     void setAddress(Address addr){
@@ -109,6 +122,7 @@ class DbClassAddress implements DbClass, DbClassAddressForTest {
     }
     void buildReadAllAddressesQuery() {
     	//IMPLEMENT -- change custid = 1 to a valid custid ////DONE\\\\\
+    	////////NEED to change altaddress  to altshipaddress\\\
         query = "SELECT * from altaddress WHERE custid = "+custProfile.getCustId() ;
     }
     void buildReadDefaultBillQuery() {
@@ -152,10 +166,43 @@ class DbClassAddress implements DbClass, DbClassAddressForTest {
     
     void populateDefaultShipAddress(ResultSet rs) throws DatabaseException {
        //implement
+    	//DONE\\
+    	  try {
+    	        
+              //we take the first returned row             
+    		  if(rs.next()){            	  
+            	  defaultShipAddress = new AddressImpl();                  
+            	  defaultShipAddress.setStreet(rs.getString("shipaddress1"));                 
+                  defaultShipAddress.setCity(rs.getString("shipcity"));
+                  defaultShipAddress.setState(rs.getString("shipstate"));
+                  defaultShipAddress.setZip(rs.getString("shipzipcode"));
+
+              }
+          }
+          catch(SQLException e){
+              throw new DatabaseException(e);
+          }
         
     }
     void populateDefaultBillAddress(ResultSet rs) throws DatabaseException {
-        //implement    
+        //implement
+    	//DONE\\
+    	  try {
+  	        
+              //we take the first returned row
+              if(rs.next()){
+            	  defaultBillAddress = new AddressImpl();                  
+            	  defaultBillAddress.setStreet(rs.getString("billaddress1"));                 
+            	  defaultBillAddress.setCity(rs.getString("billcity"));
+            	  defaultBillAddress.setState(rs.getString("billstate"));
+            	  defaultBillAddress.setZip(rs.getString("billzipcode"));
+
+              }
+          }
+          catch(SQLException e){
+              throw new DatabaseException(e);
+          }
+    	
     }
 	
 	
@@ -182,5 +229,7 @@ class DbClassAddress implements DbClass, DbClassAddressForTest {
             e.printStackTrace();
         }
     }
+
+
  
 }
