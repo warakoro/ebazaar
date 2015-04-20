@@ -46,7 +46,7 @@ public enum CheckoutController  {
 	}
 	
 	/** Asks the ShoppingCart Subsystem to run final order rules */
-	public void runFinalOrderRules(ShoppingCartSubsystem scss) throws RuleException, BusinessException {
+	public void runFinalOrderRules()throws RuleException, BusinessException {
 		//implement
 		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
 		 sc.runFinalOrderRules();	

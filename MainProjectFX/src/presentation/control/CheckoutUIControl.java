@@ -307,14 +307,24 @@ public enum CheckoutUIControl {
 	private class SubmitHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent evt) {
-			orderCompleteWindow = new OrderCompleteWindow();
 			try {
+				CheckoutController.INSTANCE.runFinalOrderRules();
+			} catch (RuleException e1) {
+				// TODO Auto-generated catch block
+				finalOrderWindow.displayError(e1.getMessage());
+			} catch (BusinessException e1) {
+				// TODO Auto-generated catch block
+			    finalOrderWindow.displayError(e1.getMessage());
+			}
+		
+			try {
+				orderCompleteWindow = new OrderCompleteWindow();
 				CheckoutController.INSTANCE.submitFinalOrder();
 				orderCompleteWindow.show();
 				finalOrderWindow.clearMessages();
 				finalOrderWindow.hide();
 			} catch (BackendException e) {
-				LOG.severe("Error:Unable to save the order");
+				LOG.severe("e.getMessage()");
 			}
 		}
 	}
