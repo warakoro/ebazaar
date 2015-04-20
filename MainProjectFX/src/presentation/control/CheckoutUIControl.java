@@ -314,6 +314,7 @@ public enum CheckoutUIControl {
 				LOG.severe("Error:Unable to save the order");
 			}
 		}
+	}
 		
 	public SubmitHandler getSubmitHandler() {
 		return new SubmitHandler();
@@ -359,4 +360,4 @@ public enum CheckoutUIControl {
 		return new ContinueFromOrderCompleteHandler();
 		}
 	}
-}
+
