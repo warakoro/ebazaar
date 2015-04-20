@@ -109,30 +109,38 @@ public enum CheckoutData {
 	public List<String> getCredCardTypes() {
 		return GuiConstants.CREDIT_CARD_TYPES;
 	}
+
 	public Address getDefaultShippingData() {
 		//implement
 		List<String> add = DefaultData.DEFAULT_SHIP_DATA;
-		return CustomerSubsystemFacade.createAddress(add.get(0), add.get(1), 
-				add.get(2), add.get(3), true, false);
+//		return CustomerSubsystemFacade.createAddress(add.get(0), add.get(1), 
+//				add.get(2), add.get(3), true, false);
+		CustomerSubsystem cust = 
+				(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		return cust.getDefaultShippingAddress();
 	}
 	
 	public Address getDefaultBillingData() {
-		List<String> add =  DefaultData.DEFAULT_BILLING_DATA;
+		/*List<String> add =  DefaultData.DEFAULT_BILLING_DATA;
 		return CustomerSubsystemFacade.createAddress(add.get(0), add.get(1), 
-				add.get(2), add.get(3), false, true);
+				add.get(2), add.get(3), false, true);*/
+		CustomerSubsystem cust = 
+				(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		return cust.getDefaultBillingAddress();
+		
 	}
 	
-	public List<String> getDefaultPaymentInfo() {
-		return DefaultData.DEFAULT_PAYMENT_INFO;
+	public CreditCard getDefaultPaymentInfo() {
+		CustomerSubsystem cust = 
+				(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		return cust.getDefaultPaymentInfo();
+		//return DefaultData.DEFAULT_PAYMENT_INFO;
 	}
-	
 	
 	public CustomerProfile getCustomerProfile() {
 		return BrowseAndSelectController.INSTANCE.getCustomerProfile();
 	}
-	
-		
-	
+
 	private class ShipAddressSynchronizer implements Synchronizer {
 		public void refresh(ObservableList list) {
 			shipAddresses = list;
