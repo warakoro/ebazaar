@@ -12,7 +12,7 @@ public class ProductSubsystemFacade implements ProductSubsystem {
 	public static Catalog createCatalog(int id, String name) {
 		return new CatalogImpl(id, name);
 	}
-	public static Product createProduct(Catalog c, String name, 
+	public static Product createProduct(Catalog c,int id, String name, 
 			LocalDate date, int numAvail, double price) {
 		return new ProductImpl(c, name, date, numAvail, price);
 	}
@@ -82,33 +82,32 @@ public class ProductSubsystemFacade implements ProductSubsystem {
 		return cat.getCatalogs().get(i);
 	}
 	@Override
-	public void saveNewCatalog(String name) throws BackendException {
+	public void saveNewCatalog(Catalog cat) throws BackendException {
 		// TODO Auto-generated method stub
 		try {
 		DbClassCatalog dbclass = new DbClassCatalog();
-		dbclass.saveNewCatalog(name);
+		dbclass.saveNewCatalog(cat);
 		}
 		catch(DatabaseException e) {
     		throw new BackendException(e);
     	}
 	}
 	@Override
-	public void saveNewProduct(Product product, Catalog catalog) throws BackendException {
+	public void saveNewProduct(Product product) throws BackendException {
 		// TODO Auto-generated method stub
 		try {
 		DbClassProduct dbclass = new DbClassProduct();
-		dbclass.saveNewProduct(product, catalog);
+		dbclass.saveNewProduct(product);
 		}
 		catch(DatabaseException e) {
     		throw new BackendException(e);
     	}
 	}
 	@Override
-	public void deleteProduct(Product product) throws BackendException {
+	public void deleteProduct(Product product, Catalog cat) throws BackendException {
 		// TODO Auto-generated method stub
 		try {
 	DbClassProduct dbclass = new DbClassProduct();
-	CatalogImpl cat = new CatalogImpl();
 	dbclass.readProductList(cat).remove(product);
 	}
 		catch(DatabaseException e) {
@@ -119,6 +118,8 @@ public class ProductSubsystemFacade implements ProductSubsystem {
 	public void deleteCatalog(Catalog catalog) throws BackendException {
 		// TODO Auto-generated method stub
 		DbClassCatalog dbclass = new DbClassCatalog();
+		
+		
 		
 	}
 }

@@ -128,7 +128,7 @@ class DbClassProduct implements DbClass {
 	 * Database columns: productid, productname, totalquantity, priceperunit,
 	 * mfgdate, catalogid, description
 	 */
-	public void saveNewProduct(Product product, Catalog catalog) throws DatabaseException {
+	public void saveNewProduct(Product product) throws DatabaseException {
 		//implement
 		//saves new produt details entered from the GUI.
 		try {
