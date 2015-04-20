@@ -305,13 +305,16 @@ public enum CheckoutUIControl {
 		@Override
 		public void handle(ActionEvent evt) {
 			orderCompleteWindow = new OrderCompleteWindow();
-			orderCompleteWindow.show();
-			finalOrderWindow.clearMessages();
-			finalOrderWindow.hide();
+			try {
+				CheckoutController.INSTANCE.submitFinalOrder();
+				orderCompleteWindow.show();
+				finalOrderWindow.clearMessages();
+				finalOrderWindow.hide();
+			} catch (BackendException e) {
+				LOG.severe("Error:Unable to save the order");
+			}
 		}
-
-	}
-
+		
 	public SubmitHandler getSubmitHandler() {
 		return new SubmitHandler();
 	}
@@ -354,5 +357,6 @@ public enum CheckoutUIControl {
 
 	public ContinueFromOrderCompleteHandler getContinueFromOrderCompleteHandler() {
 		return new ContinueFromOrderCompleteHandler();
+		}
 	}
 }
