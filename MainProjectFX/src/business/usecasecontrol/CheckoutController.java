@@ -126,7 +126,7 @@ public enum CheckoutController  {
 		setShippingAddressOnLiveCart(ship);
 	}
 	
-	public void setPaymentOnLivingCart(CreditCard cc){
+	public void setPaymentOnLiveCart(CreditCard cc){
 		sc.setPaymentInfo(cc);
 	}
 

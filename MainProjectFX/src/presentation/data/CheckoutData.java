@@ -2,6 +2,7 @@ package presentation.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import business.BusinessConstants;
@@ -19,6 +20,9 @@ import presentation.gui.GuiConstants;
 
 public enum CheckoutData {
 	INSTANCE;
+	
+	private static final Logger LOG = Logger.getLogger(CheckoutData.class
+			.getPackage().getName());
 	
 	public Address createAddress(String street, String city, String state,
 			String zip, boolean isShip, boolean isBill) {
@@ -49,13 +53,14 @@ public enum CheckoutData {
 			}
 	
 	private ObservableList<CustomerPres> loadShipAddresses() {		
-	    List<CustomerPres> list = DefaultData.CUSTS_ON_FILE
-						   .stream()
-						   .filter(cust -> cust.getAddress().isShippingAddress())
-						   .collect(Collectors.toList());
-		return FXCollections.observableList(list);		
+//	    List<CustomerPres> list = DefaultData.CUSTS_ON_FILE
+//						   .stream()
+//						   .filter(cust -> cust.getAddress().isShippingAddress())
+//						   .collect(Collectors.toList());
+			
 		//DB Data	
-//		List<CustomerPres> list = getShipAddresses();
+		List<CustomerPres> list = getShipAddresses();
+		return FXCollections.observableList(list);	
 		
 										   
 	}
@@ -72,19 +77,23 @@ public enum CheckoutData {
 	}
 	
 	private ObservableList<CustomerPres> loadBillAddresses() {
-		List list = DefaultData.CUSTS_ON_FILE
-				   .stream()
-				   .filter(cust -> cust.getAddress().isBillingAddress())
-				   .collect(Collectors.toList());
+//		List list = DefaultData.CUSTS_ON_FILE
+//				   .stream()
+//				   .filter(cust -> cust.getAddress().isBillingAddress())
+//				   .collect(Collectors.toList());
 		//DB Data
-		//List<CustomerPres> list = getBillAddresses();
-			
+			List<CustomerPres> list = getBillAddresses();
+			for(CustomerPres singleCustomer: list){
+				
+			}
 		return FXCollections.observableList(list);
 	}
 	public ObservableList<CustomerPres> getCustomerShipAddresses() {
+		shipAddresses = loadShipAddresses();
 		return shipAddresses;
 	}
 	public ObservableList<CustomerPres> getCustomerBillAddresses() {
+		billAddresses = loadBillAddresses();
 		return billAddresses;
 	}
 	public List<String> getDisplayAddressFields() {
