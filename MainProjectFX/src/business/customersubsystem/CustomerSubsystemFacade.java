@@ -4,10 +4,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import middleware.exceptions.DatabaseException;
 import middleware.exceptions.MiddlewareException;
 import middleware.externalinterfaces.CreditVerification;
+import business.BusinessConstants;
+import business.SessionCache;
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
 import business.exceptions.RuleException;
@@ -27,7 +30,7 @@ import business.ordersubsystem.OrderSubsystemFacade;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
 
 public class CustomerSubsystemFacade implements CustomerSubsystem {
-	//private static final Logger LOG = Logger.getLogger(CustomerSubsystemFacade.class.getPackage().getName(), null);
+	private static final Logger LOG = Logger.getLogger(CustomerSubsystemFacade.class.getPackage().getName(), null);
 	ShoppingCartSubsystem shoppingCartSubsystem;
 	OrderSubsystem orderSubsystem ;
 	List<Order> orderHistory;
@@ -58,10 +61,14 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
     
     void loadCustomerProfile(int id, boolean isAdmin) throws BackendException {
     	try {
+    		LOG.info("Uploading Customer Profile in the memory");
 			DbClassCustomerProfile dbclass = new DbClassCustomerProfile();
 			dbclass.readCustomerProfile(id);
 			customerProfile = dbclass.getCustomerProfile();
 			customerProfile.setIsAdmin(isAdmin);
+			
+			//adding the customer profile to the memory
+			SessionCache.getInstance().add(BusinessConstants.CUSTOMER, customerProfile);
 
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
@@ -71,9 +78,12 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
     	//implement
     	/////DONE\\\\\    	
     	try {
+    		LOG.info("Uploading Default Shipping address in the memory");
+
     		DbClassAddress dbclass = new DbClassAddress();
 			dbclass.readDefaultShipAddress(customerProfile);
 			defaultShipAddress = dbclass.getDefaultShipAddress();
+			SessionCache.getInstance().add(BusinessConstants.DefaultShipAddress, defaultShipAddress);
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
@@ -83,9 +93,11 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	//implement
 	/////DONE\\\\\    	
     	try {
+    		LOG.info("Uploading Default Billing address in to the memory");
     		DbClassAddress dbclass = new DbClassAddress();
 			dbclass.readDefaultBillAddress(customerProfile);
 			defaultBillAddress = dbclass.getDefaultBillAddress();
+			SessionCache.getInstance().add(BusinessConstants.DefaultBillAddress, defaultBillAddress);
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
@@ -95,9 +107,12 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		//Created new Class DbClassPayment for this to work
 		//DONE\\
 		try {
+    		LOG.info("Uploading Default payment info in to the memory");
     		DbClassPayment dbclass = new DbClassPayment();
 			dbclass.readDefaultPaymentInfo(customerProfile);
 			defaultPaymentInfo = dbclass.getDefaultPaymentInfo();
+			SessionCache.getInstance().add(BusinessConstants.DefaultPaymentInfo, defaultPaymentInfo);
+
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
@@ -107,6 +122,9 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		
 		// retrieve the order history for the customer and store here
 		//DONE\\
+		
+		LOG.info("Uploading order Data");
+
 		orderSubsystem = new OrderSubsystemFacade(customerProfile);
 
 	
@@ -211,33 +229,12 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 
 	@Override
 	public List<Order> getOrderHistory() throws BackendException {
-		/*implement*/
-		///DONE\\\\
-		OrderItemImpl orderItem1 = new OrderItemImpl("sfsf", 2, 4334);
-		OrderItemImpl orderItem2 = new OrderItemImpl("sdfsdf",3, 343);
-		OrderItemImpl orderItem3 = new OrderItemImpl("dfsdf",2, 454);
-		OrderItemImpl orderItem4 = new OrderItemImpl("dfsf",1, 343);
-		List<Order> listOrder = new ArrayList<Order>();
-		OrderImpl order1 = new OrderImpl();
-		OrderImpl order2 = new OrderImpl();
-		orderItem1.setOrderItemId(1001);
-		orderItem2.setOrderItemId(1002);
-		orderItem3.setOrderItemId(1003);
-		orderItem4.setOrderItemId(1004);
-		orderItem1.setOrderId(101);
-		orderItem2.setOrderId(101);
-		orderItem3.setOrderId(102);
-		orderItem4.setOrderId(102);
-		order1.setOrderId(10);
-		order2.setOrderId(11);
-		order1.setDate(LocalDate.of(2014, 11, 11));
-		order2.setDate(LocalDate.of(2015, 2, 5));
-		order1.setOrderItems(Arrays.asList(orderItem1, orderItem2));
-		order2.setOrderItems(Arrays.asList(orderItem3, orderItem4));
-		listOrder = Arrays.asList(order1,order2);
-		//orderSubsystem = new OrderSubsystemFacade(customerProfile);
-		//return orderSubsystem.getOrderHistory();
-		return listOrder;
+		///DONE\\\\	
+		////DID stubing in OrderSubsystemFacade
+		CustomerProfileImpl customerProfile = (CustomerProfileImpl) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);		
+		OrderSubsystem pss = new OrderSubsystemFacade(customerProfile);
+		return pss.getOrderHistory();		
+	
 	}
 
 	@Override
