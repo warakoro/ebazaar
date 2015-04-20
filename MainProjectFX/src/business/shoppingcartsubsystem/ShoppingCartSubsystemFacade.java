@@ -45,7 +45,7 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 	public void retrieveSavedCart() throws BackendException {
 		try {
 //			DbClassShoppingCart dbClass = new DbClassShoppingCart();
-			ShoppingCartImpl cartFound = dbClass.retrieveSavedCart(customerProfile);
+			ShoppingCartImpl cartFound = (ShoppingCartImpl)dbClass.retrieveSavedCart(customerProfile);
 			if(cartFound == null) {
 				savedCart = new ShoppingCartImpl(new ArrayList<CartItem>());
 			} else {
