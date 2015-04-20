@@ -25,7 +25,6 @@ public class ViewOrdersController   {
 		List<Order> orderList = new ArrayList<Order>();
 		List<OrderPres> orderPresList = new ArrayList<OrderPres>();
 		try {
-			System.out.println("Here");
 			orderList = customerSubsystem.getOrderHistory();
 			for(Order order : orderList){
 				Order orderImpl = new OrderImpl();

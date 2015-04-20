@@ -1,8 +1,6 @@
 package business.customersubsystem;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -24,8 +22,6 @@ import business.externalinterfaces.OrderSubsystem;
 import business.externalinterfaces.Rules;
 import business.externalinterfaces.ShoppingCart;
 import business.externalinterfaces.ShoppingCartSubsystem;
-import business.ordersubsystem.OrderImpl;
-import business.ordersubsystem.OrderItemImpl;
 import business.ordersubsystem.OrderSubsystemFacade;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
 
@@ -57,6 +53,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		shoppingCartSubsystem = ShoppingCartSubsystemFacade.INSTANCE;
 		shoppingCartSubsystem.setCustomerProfile(customerProfile);
 		shoppingCartSubsystem.retrieveSavedCart();
+		SessionCache.getInstance().add(BusinessConstants.CUSTOMER, this);
     }
     
     void loadCustomerProfile(int id, boolean isAdmin) throws BackendException {
@@ -68,7 +65,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 			customerProfile.setIsAdmin(isAdmin);
 			
 			//adding the customer profile to the memory
-			SessionCache.getInstance().add(BusinessConstants.CUSTOMER, customerProfile);
+			this.setCustomerProfile(customerProfile);
 
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
@@ -83,7 +80,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
     		DbClassAddress dbclass = new DbClassAddress();
 			dbclass.readDefaultShipAddress(customerProfile);
 			defaultShipAddress = dbclass.getDefaultShipAddress();
-			SessionCache.getInstance().add(BusinessConstants.DefaultShipAddress, defaultShipAddress);
+			this.setShippingAddressInCart(defaultShipAddress);
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
@@ -97,7 +94,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
     		DbClassAddress dbclass = new DbClassAddress();
 			dbclass.readDefaultBillAddress(customerProfile);
 			defaultBillAddress = dbclass.getDefaultBillAddress();
-			SessionCache.getInstance().add(BusinessConstants.DefaultBillAddress, defaultBillAddress);
+			this.setBillingAddressInCart(defaultBillAddress);
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
@@ -111,8 +108,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
     		DbClassPayment dbclass = new DbClassPayment();
 			dbclass.readDefaultPaymentInfo(customerProfile);
 			defaultPaymentInfo = dbclass.getDefaultPaymentInfo();
-			SessionCache.getInstance().add(BusinessConstants.DefaultPaymentInfo, defaultPaymentInfo);
-
+			this.setPaymentInfoInCart(defaultPaymentInfo);
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
@@ -120,14 +116,13 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	}
 	void loadOrderData() throws BackendException {
 		
-		// retrieve the order history for the customer and store here
+		// Working with stubbing for OrderSubsysem
 		//DONE\\
 		
-		LOG.info("Uploading order Data");
-
+		LOG.info("Uploading order Data in to memory");
 		orderSubsystem = new OrderSubsystemFacade(customerProfile);
-
-	
+		orderHistory = orderSubsystem.getOrderHistory();
+		this.setOrderHistory(orderHistory);
 	}
     /**
      * Returns true if user has admin access
@@ -151,24 +146,9 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		}
     }
     
-    public CustomerProfile getCustomerProfile() {
-
-		return customerProfile;
-	}
-
-	public Address getDefaultShippingAddress() {
-		return defaultShipAddress;
-	}
-
-	public Address getDefaultBillingAddress() {
-		return defaultBillAddress;
-	}
-	public CreditCard getDefaultPaymentInfo() {
-		return defaultPaymentInfo;
-	}
- 
     
-    /** 
+   
+	/** 
      * Use to supply all stored addresses of a customer when he wishes to select an
 	 * address in ship/bill window 
 	 */
@@ -230,29 +210,27 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	@Override
 	public List<Order> getOrderHistory() throws BackendException {
 		///DONE\\\\	
-		////DID stubing in OrderSubsystemFacade
-		CustomerProfileImpl customerProfile = (CustomerProfileImpl) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);		
-		OrderSubsystem pss = new OrderSubsystemFacade(customerProfile);
-		return pss.getOrderHistory();		
+		CustomerSubsystemFacade customer = (CustomerSubsystemFacade) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		return customer.orderHistory;		
 	
 	}
 
 	@Override
 	public void setShippingAddressInCart(Address addr) {
 		///DONE\\\
-			this.shoppingCartSubsystem.setShippingAddress(addr);
+		this.defaultShipAddress = (AddressImpl) addr;
 	}
 
 	@Override
 	public void setBillingAddressInCart(Address addr) {
 		///DONE\\\
-		this.shoppingCartSubsystem.setBillingAddress(addr);
+		this.defaultBillAddress = (AddressImpl) addr;
 	}
 
 	@Override
 	public void setPaymentInfoInCart(CreditCard cc) {
 		///DONE\\\
-		this.shoppingCartSubsystem.setPaymentInfo(cc);
+		this.defaultPaymentInfo = (CreditCardImpl) cc;
 	}
 
 	@Override
@@ -306,4 +284,55 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		///DONE\\\
 		return new CustomerProfileImpl(1, "FirstTest", "LastTest");
 	}
+	
+	
+	///Getters and Setters 
+	 public void setOrderHistory(List<Order> orderHistory) {
+			this.orderHistory = orderHistory;
+		}
+
+		public CustomerProfile getCustomerProfile() {
+
+			return customerProfile;
+		}
+
+		public Address getDefaultShippingAddress() {
+			return defaultShipAddress;
+		}
+
+		public Address getDefaultBillingAddress() {
+			return defaultBillAddress;
+		}
+		public CreditCard getDefaultPaymentInfo() {
+			return defaultPaymentInfo;
+		} 
+		public void setDefaultPaymentInfo(CreditCardImpl defaultPaymentInfo) {
+			this.defaultPaymentInfo = defaultPaymentInfo;
+		}
+	    
+	    public AddressImpl getDefaultShipAddress() {
+			return defaultShipAddress;
+		}
+
+		public void setDefaultShipAddress(AddressImpl defaultShipAddress) {
+			this.defaultShipAddress = defaultShipAddress;
+		}
+
+		public AddressImpl getDefaultBillAddress() {
+			return defaultBillAddress;
+		}
+
+		public void setDefaultBillAddress(AddressImpl defaultBillAddress) {
+			this.defaultBillAddress = defaultBillAddress;
+		}
+		
+
+		public void setCustomerProfile(CustomerProfileImpl customerProfile) {
+			this.customerProfile = customerProfile;
+		}
+
+		public void setShoppingCart(ShoppingCart shoppingCart) {
+			this.shoppingCart = shoppingCart;
+		}
+
 }
