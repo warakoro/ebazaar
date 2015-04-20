@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import middleware.exceptions.DatabaseException;
+import business.BusinessConstants;
+import business.SessionCache;
+import business.customersubsystem.CustomerSubsystemFacade;
 import business.customersubsystem.RulesPayment;
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
@@ -14,6 +17,7 @@ import business.externalinterfaces.Address;
 import business.externalinterfaces.CartItem;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerProfile;
+import business.externalinterfaces.CustomerSubsystem;
 import business.externalinterfaces.Rules;
 import business.externalinterfaces.ShoppingCart;
 import business.externalinterfaces.ShoppingCartSubsystem;
@@ -123,7 +127,14 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 	@Override
 	public void saveLiveCart() throws BackendException {
 		// TODO Auto-generated method stub
-
+		
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+				.get(BusinessConstants.CUSTOMER);
+		liveCart.setPaymentInfo(cust.getDefaultPaymentInfo());
+		liveCart.setShipAddress(cust.getDefaultShippingAddress());
+		liveCart.setBillAddress(cust.getDefaultBillingAddress());
+		customerProfile = cust.getCustomerProfile();
+		
 		try {
 			dbClass.saveCart(customerProfile, liveCart);
 		} catch (DatabaseException e) {
@@ -147,6 +158,12 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 		Rules transferObject = new RulesFinalOrder(liveCart);
 		transferObject.runRules();
 		
+	}
+	
+	public static ShoppingCart createTestShoppingCart(){
+		ShoppingCartImpl shoppingCart = new ShoppingCartImpl(new ArrayList<CartItem>());
+		shoppingCart.setCartId("1");
+		return shoppingCart;
 	}
 }
 	
