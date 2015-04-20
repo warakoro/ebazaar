@@ -72,4 +72,8 @@ public enum BrowseAndSelectController {
 		CustomerSubsystem cust = DataUtil.readCustFromCache();
 		return cust.getCustomerProfile();
 	}
+	
+	public void saveCart() throws BackendException {
+		ShoppingCartSubsystemFacade.INSTANCE.saveLiveCart();
+	}
 }
