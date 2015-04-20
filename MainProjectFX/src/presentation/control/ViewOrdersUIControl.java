@@ -1,5 +1,6 @@
 package presentation.control;
 
+import business.exceptions.BackendException;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,7 +27,12 @@ public enum ViewOrdersUIControl {
 		@Override
 		public void handle(ActionEvent evt) {
 			ordersWindow = new OrdersWindow(primaryStage);
-			ordersWindow.setData(FXCollections.observableList(ViewOrdersData.INSTANCE.getOrders()));
+			try {
+				ordersWindow.setData(FXCollections.observableList(ViewOrdersData.INSTANCE.getOrders()));
+			} catch (BackendException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ordersWindow.show();
 	        primaryStage.hide();			
 		}	

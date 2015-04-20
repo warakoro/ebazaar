@@ -2,6 +2,10 @@ package presentation.data;
 
 import java.util.List;
 
+import business.Util;
+import business.exceptions.BackendException;
+import business.usecasecontrol.ViewOrdersController;
+
 public enum ViewOrdersData {
 	INSTANCE;
 	private OrderPres selectedOrder;
@@ -12,7 +16,8 @@ public enum ViewOrdersData {
 		selectedOrder = so;
 	}
 	
-	public List<OrderPres> getOrders() {
-		return DefaultData.ALL_ORDERS;
+	public List<OrderPres> getOrders() throws BackendException{
+	//	return DefaultData.ALL_ORDERS;
+		return Util.orderListToOrderPresList(ViewOrdersController.INSTANCE.getOrderHistory());
 	}
 }

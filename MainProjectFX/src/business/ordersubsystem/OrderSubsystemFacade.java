@@ -6,14 +6,16 @@ import java.util.logging.Logger;
 
 import middleware.exceptions.DatabaseException;
 import business.exceptions.BackendException;
-import business.externalinterfaces.CartItem;
 import business.externalinterfaces.CustomerProfile;
 import business.externalinterfaces.Order;
 import business.externalinterfaces.OrderItem;
 import business.externalinterfaces.OrderSubsystem;
+import business.externalinterfaces.ProductSubsystem;
 import business.externalinterfaces.ShoppingCart;
+import business.productsubsystem.ProductSubsystemFacade;
 
 public class OrderSubsystemFacade implements OrderSubsystem {
+	
 	private static final Logger LOG = 
 			Logger.getLogger(OrderSubsystemFacade.class.getPackage().getName());
 	CustomerProfile custProfile;
@@ -25,8 +27,18 @@ public class OrderSubsystemFacade implements OrderSubsystem {
 	
 	
 	/** Used whenever an order item needs to be created from outside the order subsystem */
-    public static OrderItem createOrderItem(Integer prodId,Integer orderId, String quantityReq, String totalPrice) {
-    	return null;
+    public static OrderItem createOrderItem(Integer prodId,Integer orderId, int quantityReq, double totalPrice) {
+    	
+    	ProductSubsystem pss = new ProductSubsystemFacade();
+    	String name = null;
+		try {
+			name = pss.getProductFromId(prodId).getProductName();
+		} catch (BackendException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	double unitPrice = totalPrice/quantityReq;
+    	return new OrderItemImpl(name, quantityReq, unitPrice);
     }
     
     /** to create an Order object from outside the subsystem */
@@ -58,10 +70,11 @@ public class OrderSubsystemFacade implements OrderSubsystem {
 	@Override
 	public List<Order> getOrderHistory() throws BackendException {
 		try{
-			List<Order> orders =  new ArrayList();
+			List<Order> orders =  new ArrayList<Order>();
 			for(Integer orderId: getAllOrderIds()){
-				orders.add(getOrderData(orderId));
+				orders.add(getOrderData(orderId));			
 			}
+			
 			return orders;
 		}catch(DatabaseException e){
 			throw new BackendException(e);

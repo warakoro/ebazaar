@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import presentation.data.CartItemPres;
 import presentation.data.CatalogPres;
+import presentation.data.OrderPres;
 import presentation.data.ProductPres;
 import business.externalinterfaces.*;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
@@ -58,4 +59,14 @@ public class Util {
 				.collect(Collectors.toList());
 		
 	}
+	
+	public static List<OrderPres> orderListToOrderPresList(List<Order> list) {
+		if(list == null) return null;
+		return list.stream().map(ord -> {OrderPres op = new OrderPres();
+		                         op.setOrder(ord); return op;})
+					  .collect(Collectors.toList());
+				
+	}
+	
+	
 }

@@ -1,6 +1,7 @@
 
 package business.ordersubsystem;
 
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import middleware.exceptions.DatabaseException;
 import middleware.externalinterfaces.DataAccessSubsystem;
 import middleware.externalinterfaces.DbClass;
 import middleware.externalinterfaces.DbConfigKey;
+import business.exceptions.BackendException;
 import business.externalinterfaces.Address;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerProfile;
@@ -152,7 +154,7 @@ class DbClassOrder implements DbClass {
     }
 
     private void buildGetOrderDataQuery() {
-        query = "SELECT orderdate, totalpriceamount FROM Ord WHERE orderid = " + orderId;     
+        query = "SELECT orderid, orderdate, totalpriceamount FROM Ord WHERE orderid = " + orderId;     
     }
     
     private void buildGetOrderIdsQuery() {
@@ -163,8 +165,18 @@ class DbClassOrder implements DbClass {
         query = "SELECT * FROM OrderItem WHERE orderid = "+orderId; 
     }
     
-    private void populateOrderItems(ResultSet rs) throws DatabaseException {
-       //implement
+    private void populateOrderItems(ResultSet rs) throws DatabaseException, BackendException {
+    	orderItems= new LinkedList<OrderItem>();
+        try {
+            while(rs.next()){
+            	orderItem = OrderSubsystemFacade.createOrderItem( rs.getInt("productid"), rs.getInt("orderid"), rs.getInt("quantity"), rs.getInt("totalprice"));			   
+                orderItems.add(orderItem);
+            }
+        }
+        catch(SQLException e){
+            throw new BackendException(e);
+        }     	
+      
     }
     
     private void populateOrderIds(ResultSet resultSet) throws DatabaseException {
@@ -173,25 +185,48 @@ class DbClassOrder implements DbClass {
             while(resultSet.next()){
                 orderIds.add(resultSet.getInt("orderid"));
             }
+
         }
         catch(SQLException e){
             throw new DatabaseException(e);
         }
     }
     
-    private void populateOrderData(ResultSet resultSet) throws DatabaseException {  	
-        //implement
+    private void populateOrderData(ResultSet resultSet) throws DatabaseException, BackendException {  	
+    	orderData = new OrderImpl();
+    	try {
+            while(resultSet.next()){
+            	
+            	orderData.setOrderId(resultSet.getInt("orderId"));
+                orderData.setOrderItems(getOrderItems(resultSet.getInt("orderId")));
+            	orderData.setDate(resultSet.getDate("orderData").toLocalDate());  
+            	orderData.getTotalPrice();
+            }
+        }
+        catch(SQLException e){
+            throw new BackendException(e);
+        }       
     }    
  
     public void populateEntity(ResultSet resultSet) throws DatabaseException {
         if(queryType.equals(GET_ORDER_ITEMS)){
-            populateOrderItems(resultSet);
+            try {
+				populateOrderItems(resultSet);
+			} catch (BackendException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         else if(queryType.equals(GET_ORDER_IDS)){
             populateOrderIds(resultSet);
         }
         else if(queryType.equals(GET_ORDER_DATA)){
-        	populateOrderData(resultSet);
+        	try {
+				populateOrderData(resultSet);
+			} catch (BackendException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }       
     }
     
