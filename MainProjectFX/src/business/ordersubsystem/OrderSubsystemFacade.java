@@ -14,8 +14,7 @@ import business.externalinterfaces.OrderSubsystem;
 import business.externalinterfaces.ShoppingCart;
 
 public class OrderSubsystemFacade implements OrderSubsystem {
-	private static final Logger LOG = 
-			Logger.getLogger(OrderSubsystemFacade.class.getPackage().getName());
+	private static final Logger LOG = Logger.getLogger(OrderSubsystemFacade.class.getPackage().getName());
 	CustomerProfile custProfile;
 	    
     public OrderSubsystemFacade(CustomerProfile custProfile){
