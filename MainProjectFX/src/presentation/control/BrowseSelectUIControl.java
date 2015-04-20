@@ -222,7 +222,7 @@ public enum BrowseSelectUIControl {
 			shoppingCartWindow.show();
 			productDetailsWindow.hide();
 		}
-	}
+	} 
 	public void runShoppingCartRules() {
 		
 		
@@ -260,14 +260,51 @@ public enum BrowseSelectUIControl {
 	public CartContinueHandler getCartContinueHandler() {
 		return new CartContinueHandler();
 	}
-	private class SaveCartHandler implements EventHandler<ActionEvent> {
+	private class SaveCartHandler implements EventHandler<ActionEvent>, Callback {
 		
 		@Override
+		public void doUpdate() {
+			// TODO Auto-generated method stub
+			try {
+	    		Authorization.checkAuthorization(shoppingCartWindow, DataUtil.custIsAdmin());
+	    	} catch(UnauthorizedException e) {   
+	        	displayError(e.getMessage());
+	        	return;
+	        }			
+			try {
+				BrowseAndSelectController.INSTANCE.saveCart();
+			} catch (BackendException e) {
+				shoppingCartWindow.displayError("Database Error: Unavailable. Please try again later.");
+			}
+
+			shoppingCartWindow.show();
+			shoppingCartWindow.displayInfo(" Shopping Cart saved successfully!");
+		}
+			
+		
+		@Override
+		public Text getMessageBar() {
+			// TODO Auto-generated method stub
+			return startScreenCallback.getMessageBar();
+		}
+
+	
+		@Override
 		public void handle(ActionEvent evt) {
-			shoppingCartWindow.displayInfo("You need to implement this handler.");	
-		}	
+//			shoppingCartWindow.displayInfo("You need to implement this handler.");	
+			shoppingCartWindow = ShoppingCartWindow.INSTANCE;
+			boolean isLoggedIn = DataUtil.isLoggedIn();
+			if (!isLoggedIn) {
+				LoginUIControl loginControl = new LoginUIControl(shoppingCartWindow, shoppingCartWindow, this);
+				loginControl.startLogin();
+			} else {
+				doUpdate();
+			}
+		}
 	}
+			
 	public SaveCartHandler getSaveCartHandler() {
+		
 		return new SaveCartHandler();
 	}
 	
