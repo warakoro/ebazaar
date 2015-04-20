@@ -30,23 +30,25 @@ public enum CheckoutController  {
 		
 	public void runShoppingCartRules() throws RuleException, BusinessException {
 		//implement
+		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
 		 sc.runShoppingCartRules();	
 	}
 	
 	public void runPaymentRules(Address addr, CreditCard cc) throws RuleException, BusinessException {
 		//implement
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 		cust.runPaymentRules(addr, cc);
 	}
 	
 	public Address runAddressRules(Address addr) throws RuleException, BusinessException {
-	
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 		return cust.runAddressRules(addr);
 	}
 	
 	/** Asks the ShoppingCart Subsystem to run final order rules */
 	public void runFinalOrderRules(ShoppingCartSubsystem scss) throws RuleException, BusinessException {
 		//implement
-		
+		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
 		 sc.runFinalOrderRules();	
 	}
 	
@@ -55,21 +57,26 @@ public enum CheckoutController  {
 	 */
 	public void verifyCreditCard() throws BusinessException {
 		//implement
+		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 		cust.checkCreditCard(sc.getLiveCart().getPaymentInfo()); 
 	}
 	
 	public void saveNewAddress(Address addr) throws BackendException {
-				
+		
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);		
 		cust.saveNewAddress(addr);
 	}
 	
 	/** Asks Customer Subsystem to submit final order */
 	public void submitFinalOrder() throws BackendException {
 		//implement
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 		cust.submitOrder();
 	}
 	
 	public List<Address> retrieveShippingAddresses() {
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 		try {
 			List<Address> allAddresses = new ArrayList();
 			if (cust != null) {
@@ -88,6 +95,7 @@ public enum CheckoutController  {
 	}
 
 	public List<Address> retrieveBillingAddresses() {
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 		try {
 			List<Address> allAddresses = new ArrayList();
 			if(cust !=null){
@@ -113,9 +121,13 @@ public enum CheckoutController  {
 		sc.setShippingAddress(add);
 	}
 
-	public void setBillingShippingOmLiveCart(Address bill, Address ship) {
+	public void setBillingShippingOnLiveCart(Address bill, Address ship) {
 		setBillingAddressOnLiveCart(bill);
 		setShippingAddressOnLiveCart(ship);
+	}
+	
+	public void setPaymentOnLivingCart(CreditCard cc){
+		sc.setPaymentInfo(cc);
 	}
 
 }
