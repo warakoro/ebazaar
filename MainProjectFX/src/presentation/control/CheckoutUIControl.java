@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.text.Text;
@@ -52,6 +53,7 @@ public enum CheckoutUIControl {
 			EventHandler<ActionEvent>, Callback {
 		CheckoutData data = CheckoutData.INSTANCE;
 		public void doUpdate() {
+			shippingBillingWindow = new ShippingBillingWindow();
 			CustomerProfile custProfile = data.getCustomerProfile();
 			Address defaultShipAddress = data.getDefaultShippingData();
 			Address defaultBillAddress = data.getDefaultBillingData();
@@ -135,8 +137,9 @@ public enum CheckoutUIControl {
 			Address cleansedBillAddress = null;
 			if (shippingBillingWindow.getSaveShipAddr()) {
 				try {
-					cleansedShipAddress = CheckoutController.INSTANCE.runAddressRules(shippingBillingWindow
-							.getShippingAddress());
+					cleansedShipAddress = CheckoutController.INSTANCE
+							.runAddressRules(shippingBillingWindow
+									.getShippingAddress());
 				} catch (RuleException e) {
 					rulesOk = false;
 					shippingBillingWindow
@@ -144,15 +147,17 @@ public enum CheckoutUIControl {
 									+ e.getMessage());
 				} catch (BusinessException e) {
 					rulesOk = false;
-					shippingBillingWindow.displayError(
-							ErrorMessages.GENERAL_ERR_MSG + ": Message: " + e.getMessage());
+					shippingBillingWindow
+							.displayError(ErrorMessages.GENERAL_ERR_MSG
+									+ ": Message: " + e.getMessage());
 				}
 			}
 			if (rulesOk) {
 				if (shippingBillingWindow.getSaveBillAddr()) {
 					try {
-						cleansedBillAddress = CheckoutController.INSTANCE.runAddressRules(shippingBillingWindow
-								.getBillingAddress());
+						cleansedBillAddress = CheckoutController.INSTANCE
+								.runAddressRules(shippingBillingWindow
+										.getBillingAddress());
 					} catch (RuleException e) {
 						rulesOk = false;
 						shippingBillingWindow
@@ -160,40 +165,49 @@ public enum CheckoutUIControl {
 										+ e.getMessage());
 					} catch (BusinessException e) {
 						rulesOk = false;
-						shippingBillingWindow.displayError(
-								ErrorMessages.GENERAL_ERR_MSG + ": Message: " + e.getMessage());
+						shippingBillingWindow
+								.displayError(ErrorMessages.GENERAL_ERR_MSG
+										+ ": Message: " + e.getMessage());
 					}
 				}
 			}
 			if (rulesOk) {
-				
+
 				LOG.info("Address Rules passed!");
 				if (cleansedShipAddress != null) {
 					try {
-						CheckoutController.INSTANCE.saveNewAddress(cleansedShipAddress);
-					} catch(BackendException e) {
-						shippingBillingWindow.displayError("New Shipping address could not be saved. Message: " 
-							+ e.getMessage());
+						CheckoutController.INSTANCE
+								.saveNewAddress(cleansedShipAddress);
+					} catch (BackendException e) {
+						shippingBillingWindow
+								.displayError("New shipping address not saved. Message: "
+										+ e.getMessage());
+						rulesOk = false;
 					}
 				}
-				if (cleansedBillAddress != null) {		
+				if (cleansedBillAddress != null) {
 					try {
-						CheckoutController.INSTANCE.saveNewAddress(cleansedBillAddress);
-					} catch(BackendException e) {
-						shippingBillingWindow.displayError("New billing address could not be saved. Message: " 
-							+ e.getMessage());
+						CheckoutController.INSTANCE
+								.saveNewAddress(cleansedBillAddress);
+					} catch (BackendException e) {
+						shippingBillingWindow
+								.displayError("New billing address not saved. Message: "
+										+ e.getMessage());
+						rulesOk = false;
 					}
 				}
-				CheckoutController.INSTANCE.setBillingShippingOnLiveCart(
-						shippingBillingWindow.getBillingAddress(),
-						shippingBillingWindow.getShippingAddress());
-				paymentWindow = new PaymentWindow();
-				paymentWindow.show();
-				shippingBillingWindow.hide();
+				if (rulesOk) {
+					CheckoutController.INSTANCE
+							.setBillingShippingOnLiveCart(
+									shippingBillingWindow.getBillingAddress(),
+									shippingBillingWindow.getShippingAddress());
+					paymentWindow = new PaymentWindow();
+					paymentWindow.show();
+					shippingBillingWindow.hide();
+				}
 			}
 		}
 	}
-	
 	public ProceedToPaymentHandler getProceedToPaymentHandler() {
 		return new ProceedToPaymentHandler();
 	}
@@ -254,21 +268,26 @@ public enum CheckoutUIControl {
 		@Override
 		public void handle(ActionEvent evt) {
 			try {
-				CheckoutController.INSTANCE.runPaymentRules(shippingBillingWindow.getBillingAddress(),
-					paymentWindow.getCreditCardFromWindow());
-				CheckoutController.INSTANCE.setPaymentOnLiveCart(paymentWindow.getCreditCardFromWindow());
-//				CheckoutController.INSTANCE.verifyCreditCard();
+				CheckoutController.INSTANCE.runPaymentRules(
+						shippingBillingWindow.getBillingAddress(),
+						paymentWindow.getCreditCardFromWindow());
+				CheckoutController.INSTANCE
+						.setPaymentOnLiveCart(paymentWindow
+								.getCreditCardFromWindow());
+				// CheckoutController.INSTANCE.verifyCreditCard();
+
 				paymentWindow.clearMessages();
 				paymentWindow.hide();
 				termsWindow = new TermsWindow();
 				termsWindow.show();
-			} catch(RuleException e) {
+			} catch (RuleException e) {
 				paymentWindow.displayError(e.getMessage());
-			} catch(BusinessException e) {
+			} catch (BusinessException e) {
 				paymentWindow.displayError(ErrorMessages.DATABASE_ERROR);
 			}
 		}
 	}
+
 
 	public ProceedToTermsHandler getProceedToTermsHandler() {
 		return new ProceedToTermsHandler();
@@ -361,13 +380,25 @@ public enum CheckoutUIControl {
 	// handlers for OrderCompleteWindow 
 
 	private class ContinueFromOrderCompleteHandler implements
-			EventHandler<ActionEvent> {
-		@Override
-		public void handle(ActionEvent evt) {
-			CatalogListWindow.getInstance().show();
-			orderCompleteWindow.hide();
-		}
+	EventHandler<ActionEvent> {
+@Override
+public void handle(ActionEvent evt) {
+	try {
+		CatalogListWindow catalogWindow = CatalogListWindow
+				.getInstance(BrowseSelectUIControl.INSTANCE
+						.getPrimaryState(), FXCollections
+						.observableList(BrowseSelectData.INSTANCE
+								.getCatalogList()));
+		catalogWindow.show();
+		orderCompleteWindow.hide();
+	} catch (BackendException e) {
+		// TODO Auto-generated catch block
+		LOG.severe(e.getMessage());
 	}
+
+}
+}
+
 
 	public ContinueFromOrderCompleteHandler getContinueFromOrderCompleteHandler() {
 		return new ContinueFromOrderCompleteHandler();

@@ -38,6 +38,9 @@ class DbClassAddress implements DbClass, DbClassAddressForTest {
     private final String CITY = "city";
     private final String STATE = "state";
     private final String ZIP = "zip";
+    
+    private final String ISSHIP = "isship";
+   	private final String ISBILL = "isbill";
 	
     public void saveAddress(CustomerProfile custProfile) throws DatabaseException {
         this.custProfile = custProfile;
@@ -149,7 +152,7 @@ class DbClassAddress implements DbClass, DbClassAddressForTest {
         if(rs != null){
             try {
                 while(rs.next()) {
-                    address = new AddressImpl();
+                    address = new AddressImpl(rs.getBoolean(ISSHIP),rs.getBoolean(ISBILL));
                     String str = rs.getString(STREET);
                     address.setStreet(str);
                     address.setCity(rs.getString(CITY));

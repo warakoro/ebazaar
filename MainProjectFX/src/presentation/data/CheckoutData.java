@@ -53,6 +53,8 @@ public enum CheckoutData {
 			}
 	
 	private ObservableList<CustomerPres> loadShipAddresses() {		
+		
+		//For DefaultData
 //	    List<CustomerPres> list = DefaultData.CUSTS_ON_FILE
 //						   .stream()
 //						   .filter(cust -> cust.getAddress().isShippingAddress())
@@ -77,6 +79,8 @@ public enum CheckoutData {
 	}
 	
 	private ObservableList<CustomerPres> loadBillAddresses() {
+		
+		//For DefaultData
 //		List list = DefaultData.CUSTS_ON_FILE
 //				   .stream()
 //				   .filter(cust -> cust.getAddress().isBillingAddress())

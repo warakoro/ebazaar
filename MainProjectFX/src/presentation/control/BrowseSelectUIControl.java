@@ -57,6 +57,10 @@ public enum BrowseSelectUIControl {
 		startScreenCallback = callback;
 	}
 	
+	public Stage getPrimaryState(){
+				return primaryStage;
+			}
+	
 	
 	//// Handlers for browse and select portion of Start page
 	private class OnlinePurchaseHandler implements EventHandler<ActionEvent> {

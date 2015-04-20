@@ -50,7 +50,7 @@ public enum CheckoutController  {
 		//implement
 		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
 		 sc.runFinalOrderRules();	
-	}
+	}	
 	
 	/** Asks Customer Subsystem to check credit card against 
 	 *  Credit Verification System 

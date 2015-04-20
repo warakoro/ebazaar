@@ -204,12 +204,10 @@ public class ShippingBillingWindow extends Stage implements MessageableWindow {
 	       
 		//GUI manages the select address buttons
 		selectShipButton.setOnAction(evt -> {
-			CheckoutData.INSTANCE.getCustomerShipAddresses();
 			messageBar.setText("");
 			shipAddressWindow.show();
 		});
 		selectBillButton.setOnAction(evt -> {	
-			CheckoutData.INSTANCE.getCustomerBillAddresses();
 			messageBar.setText("");
 			billAddressWindow.show();
 		});
@@ -258,6 +256,9 @@ public class ShippingBillingWindow extends Stage implements MessageableWindow {
     
     
     private void createPopups() {
+    	
+    	CheckoutData.INSTANCE.getCustomerShipAddresses();
+    	 CheckoutData.INSTANCE.getCustomerBillAddresses();
     	CheckoutData.ShipBill ship 
     	  = new CheckoutData.ShipBill(true, "Shipping Addresses", 
     			  CheckoutData.INSTANCE.getShipAddressSynchronizer());

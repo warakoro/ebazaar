@@ -19,6 +19,12 @@ public class AddressImpl implements Address {
 		isShippingAddress = isShip;
 		isBillingAddress = isBill;
 	}
+	
+	public AddressImpl(boolean isShip,boolean isBill){
+				isShippingAddress = isShip;
+				isBillingAddress = isBill;
+			}
+	
 	public AddressImpl() {}
 	public boolean isShippingAddress() {
 		return isShippingAddress;
