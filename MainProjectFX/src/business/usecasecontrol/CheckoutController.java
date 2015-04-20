@@ -21,15 +21,15 @@ import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
 public enum CheckoutController  {
 	INSTANCE;
 	CustomerSubsystem cust = 
-			(CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+			(CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 	
 	private static final Logger LOG = Logger.getLogger(CheckoutController.class
 			.getPackage().getName());
 	
-	
+	ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
+		
 	public void runShoppingCartRules() throws RuleException, BusinessException {
 		//implement
-		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
 		 sc.runShoppingCartRules();	
 	}
 	
@@ -47,7 +47,6 @@ public enum CheckoutController  {
 	public void runFinalOrderRules(ShoppingCartSubsystem scss) throws RuleException, BusinessException {
 		//implement
 		
-		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
 		 sc.runFinalOrderRules();	
 	}
 	
@@ -56,7 +55,6 @@ public enum CheckoutController  {
 	 */
 	public void verifyCreditCard() throws BusinessException {
 		//implement
-		ShoppingCartSubsystem sc=  ShoppingCartSubsystemFacade.INSTANCE;
 		cust.checkCreditCard(sc.getLiveCart().getPaymentInfo()); 
 	}
 	
@@ -71,28 +69,56 @@ public enum CheckoutController  {
 		cust.submitOrder();
 	}
 	
-	public List<Address> retrieveShippingAddresses(){
-				try {
-					List<Address> shippingAddresses = cust.getAllAddresses();
-					
-					return shippingAddresses.stream().filter(address -> address.isShippingAddress()).collect(Collectors.toList());
-				} catch (BackendException e) {
-					// TODO Auto-generated catch block
-					LOG.severe("Error: Could not retrieve shipping addresses");
-				}
-				return new ArrayList<>();
+	public List<Address> retrieveShippingAddresses() {
+		try {
+			List<Address> allAddresses = new ArrayList();
+			if (cust != null) {
+				allAddresses = cust.getAllAddresses();
+			} else {
+				return allAddresses;
 			}
-			
-			public List<Address> retrieveBillingAddresses(){
-				try {
-					List<Address> billingAddresses = cust.getAllAddresses();
-					
-					return billingAddresses.stream().filter(address -> address.isBillingAddress()).collect(Collectors.toList());
-				} catch (BackendException e) {
-					// TODO Auto-generated catch block
-					LOG.severe("Error: Could not retrieve billing addresses");
-				}
-				return new ArrayList<>();
+			return allAddresses.stream()
+					.filter(address -> address.isShippingAddress())
+					.collect(Collectors.toList());
+		} catch (BackendException e) {
+			// TODO Auto-generated catch block
+			LOG.severe("Error:Could not retrieve shipping addresses");
+		}
+		return new ArrayList<>();
+	}
+
+	public List<Address> retrieveBillingAddresses() {
+		try {
+			List<Address> allAddresses = new ArrayList();
+			if(cust !=null){
+			 allAddresses = cust.getAllAddresses();
+			}else{
+				return allAddresses;
 			}
+			return allAddresses.stream()
+					.filter(address -> address.isBillingAddress())
+					.collect(Collectors.toList());
+		} catch (BackendException e) {
+			// TODO Auto-generated catch block
+			LOG.severe("Error:Could not retrieve billing addresses");
+		}
+		return new ArrayList<>();
+	}
+
+	public void setBillingAddressOnLiveCart(Address add) {
+		sc.setBillingAddress(add);
+	}
+
+	public void setShippingAddressOnLiveCart(Address add) {
+		sc.setShippingAddress(add);
+	}
+
+	public void setBillingShippingOmLiveCart(Address bill, Address ship) {
+		setBillingAddressOnLiveCart(bill);
+		setShippingAddressOnLiveCart(ship);
+	}
 
 }
+			
+
+
