@@ -17,6 +17,7 @@ import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerProfile;
 import business.externalinterfaces.CustomerSubsystem;
 import business.externalinterfaces.DbClassAddressForTest;
+import business.externalinterfaces.DbClassCustomerProfileForTest;
 import business.externalinterfaces.Order;
 import business.externalinterfaces.OrderSubsystem;
 import business.externalinterfaces.Rules;
@@ -53,6 +54,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		shoppingCartSubsystem = ShoppingCartSubsystemFacade.INSTANCE;
 		shoppingCartSubsystem.setCustomerProfile(customerProfile);
 		shoppingCartSubsystem.retrieveSavedCart();
+		LOG.info("Adding CUSTOMER to the session Cache");
 		SessionCache.getInstance().add(BusinessConstants.CUSTOMER, this);
     }
     
@@ -99,6 +101,8 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 			throw new BackendException(e);
 		}
 	}
+	
+
 	void loadDefaultPaymentInfo() throws BackendException {
 		//implement
 		//Created new Class DbClassPayment for this to work
@@ -154,22 +158,15 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	 */
     public List<Address> getAllAddresses() throws BackendException {
 		// ///DONE\\\\\
-    	//Check the query
 		List<Address> listOfAddress = new ArrayList<Address>();
 		try {
+    		LOG.info("Getting all address");
 			DbClassAddress dbclass = new DbClassAddress();
 			dbclass.readAllAddresses(customerProfile);
 			listOfAddress = dbclass.getAddressList();
 		} catch (DatabaseException e) {
 			throw new BackendException(e);
 		}
-		/*
-		 * Stubbing Address add1 = new AddressImpl("1000 N 4th street",
-		 * "Fairfield", "Iowa", "52557", false, true); Address add2 = new
-		 * AddressImpl("1000 Bullington street", "New York City", "New York",
-		 * "52557", false, true); listOfAddress.add(add1);
-		 * listOfAddress.add(add2);
-		 */
 		return listOfAddress;
 	}
 
@@ -263,7 +260,6 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 
 	@Override
 	public void checkCreditCard(CreditCard cc) throws BusinessException {
-		//
 		//verifying credit card
 		try {
 			creditVerification.checkCreditCard(customerProfile, defaultBillAddress, cc, shoppingCart.getTotalPrice());
@@ -284,6 +280,12 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		///DONE\\\
 		return new CustomerProfileImpl(1, "FirstTest", "LastTest");
 	}
+	
+	@Override
+	public DbClassCustomerProfileForTest getGenericDbClassCustomerProfile() {
+		return new DbClassCustomerProfile();
+	}
+
 	
 	
 	///Getters and Setters 
@@ -335,4 +337,12 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 			this.shoppingCart = shoppingCart;
 		}
 
+		@Override
+		public Address getDefaultBillingAddressForTest(int id) throws BackendException, DatabaseException {
+			loadCustomerProfile(id, true);
+			loadDefaultBillAddress();
+			return defaultBillAddress;
+		}
+
+		
 }

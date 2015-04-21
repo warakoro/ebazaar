@@ -125,7 +125,6 @@ class DbClassAddress implements DbClass, DbClassAddressForTest {
     }
     void buildReadAllAddressesQuery() {
     	//IMPLEMENT -- change custid = 1 to a valid custid ////DONE\\\\\
-    	////////NEED to change altaddress  to altshipaddress\\\
         query = "SELECT * from altaddress WHERE custid = "+custProfile.getCustId() ;
     }
     void buildReadDefaultBillQuery() {

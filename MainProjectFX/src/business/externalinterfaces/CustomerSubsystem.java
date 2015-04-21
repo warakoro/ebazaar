@@ -2,6 +2,7 @@
 package business.externalinterfaces;
 import java.util.List;
 
+import middleware.exceptions.DatabaseException;
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
 import business.exceptions.RuleException;
@@ -126,5 +127,8 @@ public interface CustomerSubsystem {
     //TESTING
     public DbClassAddressForTest getGenericDbClassAddress(); 
     public CustomerProfile getGenericCustomerProfile();
+	public DbClassCustomerProfileForTest getGenericDbClassCustomerProfile();
+
+	public Address getDefaultBillingAddressForTest(int id) throws BackendException, DatabaseException;
     
 }

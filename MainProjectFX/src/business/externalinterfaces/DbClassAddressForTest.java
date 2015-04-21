@@ -9,4 +9,5 @@ import middleware.externalinterfaces.DbClass;
 public interface DbClassAddressForTest extends DbClass {
 	public List<Address> getAddressList();
 	public void readAllAddresses(CustomerProfile custProfile) throws DatabaseException;
+	
 }
