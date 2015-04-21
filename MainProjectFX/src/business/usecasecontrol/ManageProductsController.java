@@ -55,11 +55,11 @@ public class ManageProductsController   {
 	}
 
 
-	public void saveProduct(Product newProd) throws BackendException {
+	/*public void saveProduct(Product newProd,Catalog cat) throws BackendException {
 		ProductSubsystem pss  = new ProductSubsystemFacade();
-		pss.saveNewProduct(newProd);
+		pss.saveNewProduct(newProd, cat);
 		
-	}
+	}*/
 	public List<Product> getProductList(Catalog catalog) throws BackendException {
 		ProductSubsystem pss  = new ProductSubsystemFacade();
 		return pss.getProductList(catalog);
@@ -68,9 +68,9 @@ public class ManageProductsController   {
 		 ProductSubsystem pss  = new ProductSubsystemFacade();
 		return pss.getCatalogList();
 	 }
-	 public void deleteProduct(Product product, Catalog cat) throws BackendException {
+	 public void deleteProduct(Product product) throws BackendException {
 		 ProductSubsystem pss  = new ProductSubsystemFacade();
-		 pss.deleteProduct(product, cat);
+		 pss.deleteProduct(product);
 	 }
 	 public void deleteCatalog(Catalog catalog) throws BackendException {
 		 ProductSubsystem pss  = new ProductSubsystemFacade();

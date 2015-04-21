@@ -196,7 +196,7 @@ public class MaintainProductsWindow extends Stage implements MessageableWindow {
 		btnBox.getChildren().add(backButton);
 		ManageProductsUIControl.INSTANCE.setMaintainProductsWindow(this);
 		deleteButton.setOnAction(ManageProductsUIControl.INSTANCE.getDeleteProducthandler());
-	
+		backButton.setOnAction(ManageProductsUIControl.INSTANCE.getBackFromProdsButtonHandler());
 //		deleteButton.setOnAction(evt -> {
 //			TableUtil.selectByRow(table);
 //			CatalogPres selectedCatalog = ManageProductsData.INSTANCE.getSelectedCatalog();
@@ -219,7 +219,7 @@ public class MaintainProductsWindow extends Stage implements MessageableWindow {
 //				
 //		    }
 //		});
-		backButton.setOnAction(ManageProductsUIControl.INSTANCE.getBackFromProdsButtonHandler());
+		
 			
 		//HERE
 		addButton.setOnAction(evt -> {
@@ -242,8 +242,7 @@ public class MaintainProductsWindow extends Stage implements MessageableWindow {
 	@Override
 	public Text getMessageBar() {
 		// TODO Auto-generated method stub
-		return null;
-	}
+		return messageBar;	}
 
 
 	

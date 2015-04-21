@@ -2,8 +2,11 @@ package presentation.data;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.sun.javafx.collections.MappingChange.Map;
 
 import presentation.gui.GuiUtils;
 import javafx.collections.FXCollections;
@@ -19,9 +22,10 @@ import business.usecasecontrol.ManageProductsController;
 
 public enum ManageProductsData {
 	INSTANCE;
-	
+	ProductSubsystem productSubsystem = new ProductSubsystemFacade();
 	private CatalogPres defaultCatalog = readDefaultCatalogFromDataSource();
 	private ManageProductsController mpc = new ManageProductsController();
+	
 	private CatalogPres readDefaultCatalogFromDataSource() {
 //		try {
 //		return mpc.getCatalogList()
@@ -47,13 +51,13 @@ public enum ManageProductsData {
 	//////////// Products List model
 	private ObservableMap<CatalogPres, List<ProductPres>> productsMap
 	   = readProductsFromDataSource();
-	
-	/** Initializes the productsMap */
+/*	
+	*//** Initializes the productsMap *//*
 	private ObservableMap<CatalogPres, List<ProductPres>> readProductsFromDataSource() {
 		return DefaultData.PRODUCT_LIST_DATA;
 	}
 	
-	/** Delivers the requested products list to the UI */
+	*//** Delivers the requested products list to the UI *//*
 	public ObservableList<ProductPres> getProductsList(CatalogPres catPres) {
 		return FXCollections.observableList(productsMap.get(catPres));
 	}
@@ -77,22 +81,100 @@ public enum ManageProductsData {
 		specifiedProds.addAll(newProducts);
 	}
 	
-	/** This method looks for the 0th element of the toBeRemoved list 
+	*//** This method looks for the 0th element of the toBeRemoved list 
 	 *  and if found, removes it. In this app, removing more than one product at a time
 	 *  is  not supported.
 	 * @throws BackendException 
-	 */
+	 *//*
 	public boolean removeFromProductList(CatalogPres cat, ObservableList<ProductPres> toBeRemoved) throws BackendException {
 		ManageProductsController mpc = new ManageProductsController();
 		if(toBeRemoved != null && !toBeRemoved.isEmpty()) {
 			mpc.deleteProduct(toBeRemoved.get(0).getProduct(), cat.getCatalog());
 			boolean result = productsMap.get(cat).remove(toBeRemoved.get(0));
+			//boolean result = productsMap.remove(toBeRemoved.get(0), toBeRemoved.get(0).getProduct());
+			return result;
+		}
+		return false;
+	}*/
+		
+	//////// Catalogs List model
+	private ObservableMap<CatalogPres, List<ProductPres>> readProductsFromDataSource() {
+		ObservableMap<CatalogPres, List<ProductPres>> productsMap =
+	            FXCollections.observableHashMap();
+		//Map<CatalogPres, List<ProductPres>> productsMap = new HashMap<CatalogPres, List<ProductPres>>();
+		
+		List<CatalogPres> catPresList = readCatalogsFromDataSource();
+		for (CatalogPres catPres : catPresList) {
+			List<Product> products;
+			try {
+				products = productSubsystem.getProductList(catPres.getCatalog());
+				
+				List<ProductPres> productsPres = new ArrayList<ProductPres>();
+				for (Product product : products) {
+					productsPres.add(new ProductPres(product));
+				}
+				
+				productsMap.put(catPres, productsPres);
+			} catch (BackendException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return FXCollections.observableMap(productsMap);
+	}
+	
+	/** Delivers the requested products list to the UI */
+	public ObservableList<ProductPres> getProductsList(CatalogPres catPres) {
+		return FXCollections.observableList(productsMap.get(catPres));
+	}
+	
+	public ProductPres productPresFromData(Catalog c,Integer id, String name, String date,  //MM/dd/yyyy 
+			int numAvail, double price) {
+		
+		
+		Product product = ProductSubsystemFacade.createProduct(c, id,name, 
+				GuiUtils.localDateForString(date), numAvail, price);
+		ProductPres prodPres = new ProductPres(product);
+		prodPres.setProduct(product);
+		return prodPres;
+	}
+	
+	public void addToProdList(CatalogPres catPres, ProductPres prodPres) {
+		ProductSubsystemFacade productSubsystemFacade = new ProductSubsystemFacade();
+		prodPres.getProduct().setCatalog(catPres.getCatalog());
+		try {
+			Integer productId = productSubsystemFacade.saveNewProduct(prodPres.getProduct());
+			prodPres.getProduct().setProductId(productId);
+		} catch (BackendException e) {
+			e.printStackTrace();
+		}
+		
+		ObservableList<ProductPres> newProducts =
+		           FXCollections.observableArrayList(prodPres);
+		List<ProductPres> specifiedProds = productsMap.get(catPres);
+		
+		//Place the new item at the bottom of the list
+		specifiedProds.addAll(newProducts);
+	}
+	
+	/** This method looks for the 0th element of the toBeRemoved list 
+	 *  and if found, removes it. In this app, removing more than one product at a time
+	 *  is  not supported.
+	 */
+	public boolean removeFromProductList(CatalogPres cat, ObservableList<ProductPres> toBeRemoved) {
+		if(toBeRemoved != null && !toBeRemoved.isEmpty()) {
+			ProductSubsystemFacade productSubsystemFacade = new ProductSubsystemFacade();
+			try {
+				productSubsystemFacade.deleteProduct(toBeRemoved.get(0).getProduct());
+			} catch (BackendException e) {
+				e.printStackTrace();
+			}
+			boolean result = productsMap.get(cat).remove(toBeRemoved.get(0));
+			
 			return result;
 		}
 		return false;
 	}
-		
-	//////// Catalogs List model
 	private ObservableList<CatalogPres> catalogList = readCatalogsFromDataSource();
 
 	/** Initializes the catalogList */

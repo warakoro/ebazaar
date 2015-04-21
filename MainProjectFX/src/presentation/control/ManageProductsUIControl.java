@@ -5,10 +5,12 @@ import java.time.format.DateTimeFormatter;
 
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
+import business.exceptions.UnauthorizedException;
 import business.externalinterfaces.Catalog;
 import business.externalinterfaces.Product;
 import business.usecasecontrol.ManageProductsController;
 import presentation.data.CatalogPres;
+import presentation.data.DataUtil;
 import presentation.data.DefaultData;
 import presentation.data.ManageProductsData;
 import presentation.data.ProductPres;
@@ -23,6 +25,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
@@ -42,13 +45,35 @@ public enum ManageProductsUIControl {
 	MaintainProductsWindow maintainProductsWindow;
 	AddCatalogPopup addCatalogPopup;
 	AddProductPopup addProductPopup;
-	MaintainProductsWindow mpw;
+	//MaintainProductsWindow mpw;
 	
 	// Manage catalogs
-	private class MaintainCatalogsHandler implements EventHandler<ActionEvent> {
+	private class MaintainCatalogsHandler implements EventHandler<ActionEvent>, Callback {
 		@Override
 		public void handle(ActionEvent e) {
 			maintainCatalogsWindow = new MaintainCatalogsWindow(primaryStage);
+			boolean isLoggedIn = DataUtil.isLoggedIn();
+			if (!isLoggedIn) {
+				LoginUIControl loginControl = new LoginUIControl(maintainCatalogsWindow, primaryStage);
+				loginControl.startLogin();
+			} else {
+				doUpdate();
+			}
+		}
+
+		@Override
+		public Text getMessageBar() {
+			return startScreenCallback.getMessageBar();
+		}
+
+		@Override
+		public void doUpdate() {
+			try {
+	    		Authorization.checkAuthorization(maintainCatalogsWindow, DataUtil.custIsAdmin());
+	    	} catch(UnauthorizedException e) {   
+	        	displayError(e.getMessage());
+	        	return;
+	        }
 			ObservableList<CatalogPres> list = ManageProductsData.INSTANCE.getCatalogList();
 			maintainCatalogsWindow.setData(list);
 			maintainCatalogsWindow.show();
@@ -61,10 +86,32 @@ public enum ManageProductsUIControl {
 		return new MaintainCatalogsHandler();
 	}
 	
-	private class MaintainProductsHandler implements EventHandler<ActionEvent> {
+	private class MaintainProductsHandler implements EventHandler<ActionEvent>, Callback {
 		@Override
 		public void handle(ActionEvent e) {
 			maintainProductsWindow = new MaintainProductsWindow(primaryStage);
+			boolean isLoggedIn = DataUtil.isLoggedIn();
+			if (!isLoggedIn) {
+				LoginUIControl loginControl = new LoginUIControl(maintainProductsWindow, primaryStage);
+				loginControl.startLogin();
+			} else {
+				doUpdate();
+			}
+		}
+
+		@Override
+		public Text getMessageBar() {
+			return startScreenCallback.getMessageBar();
+		}
+
+		@Override
+		public void doUpdate() {
+			try {
+	    		Authorization.checkAuthorization(maintainProductsWindow, DataUtil.custIsAdmin());
+	    	} catch(UnauthorizedException e) {   
+	        	displayError(e.getMessage());
+	        	return;
+	        }
 			CatalogPres selectedCatalog = ManageProductsData.INSTANCE.getSelectedCatalog();
 			if(selectedCatalog != null) {
 				ObservableList<ProductPres> list = ManageProductsData.INSTANCE.getProductsList(selectedCatalog);
@@ -169,9 +216,10 @@ public enum ManageProductsUIControl {
 							    Double.parseDouble(addProductPopup.getUnitPrice()), LocalDate.parse(addProductPopup.getManufactureDate(), DateTimeFormatter.ofPattern("MM/dd/yyyy")), 
 							    addProductPopup.getDescription());
 					
-					mpc.saveProduct(newProd);
+					mpc.addProduct(newProd);;
 					ProductPres prodPres = new ProductPres();
 					prodPres.setProduct(newProd);
+					//mpc.saveProduct(newProd);
 					maintainProductsWindow.addItem(prodPres);
 					addProductPopup.setMessageBar("");
 					addProductPopup.hide();
@@ -193,34 +241,27 @@ public enum ManageProductsUIControl {
 	}
 	private class deleteProducthandler implements EventHandler<ActionEvent> {
 		public void handle(ActionEvent e) {
-			TableUtil.selectByRow(mpw.getTable());
+			TableUtil.selectByRow(maintainProductsWindow.getTable());
 			CatalogPres selectedCatalog = ManageProductsData.INSTANCE.getSelectedCatalog();
 		    ObservableList<ProductPres> tableItems = ManageProductsData.INSTANCE.getProductsList(selectedCatalog);
-		    ObservableList<Integer> selectedIndices = mpw.getTable().getSelectionModel().getSelectedIndices();
-		    ObservableList<ProductPres> selectedItems = mpw.getTable().getSelectionModel()
+		    ObservableList<Integer> selectedIndices = maintainProductsWindow.getTable().getSelectionModel().getSelectedIndices();
+		    ObservableList<ProductPres> selectedItems = maintainProductsWindow.getTable().getSelectionModel()
 					.getSelectedItems();
 		    if(tableItems.isEmpty()) {
-		    	mpw.setMessageBar("Nothing to delete!");
+		    	maintainProductsWindow.setMessageBar("Nothing to delete!");
 		    } else if (selectedIndices == null || selectedIndices.isEmpty()) {
-		    	mpw.setMessageBar("Please select a row.");
+		    	maintainProductsWindow.setMessageBar("Please select a row.");
 		    } else {
 		    	boolean result;
-				try {
-					result = ManageProductsData.INSTANCE.removeFromProductList(selectedCatalog, selectedItems);
-				
-			    if(result) {
-			    	//table.setItems(ManageProductsData.INSTANCE.getProductsList(selectedCatalog));
-			    	mpw.getTable().setItems(ManageProductsData.INSTANCE.getProductsList(selectedCatalog));
-			    	mpw.clearMessages();
-			    } else {
-			    	mpw.displayInfo("No items deleted.");
-			    }
-			    
-				} catch (BackendException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				
-		    }
+				result = ManageProductsData.INSTANCE.removeFromProductList(selectedCatalog, selectedItems);
+
+   if(result) {
+				//table.setItems(ManageProductsData.INSTANCE.getProductsList(selectedCatalog));
+				maintainProductsWindow.getTable().setItems(ManageProductsData.INSTANCE.getProductsList(selectedCatalog));
+				maintainProductsWindow.clearMessages();
+   } else {
+				maintainProductsWindow.displayInfo("No items deleted.");
+   }
 		}
 	}
 	}
@@ -229,7 +270,7 @@ public enum ManageProductsUIControl {
 	}
 
 	public void setMaintainProductsWindow(MaintainProductsWindow maintainProductsWindow) {
-		this.mpw = maintainProductsWindow;
+		this.maintainProductsWindow = maintainProductsWindow;
 	}
 	private class deleteCataloghandler implements EventHandler<ActionEvent> {
 		public void handle(ActionEvent e) {

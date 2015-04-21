@@ -68,12 +68,18 @@ public class ProductSubsystemFacade implements ProductSubsystem {
     	}
     }
 	
-	public int readQuantityAvailable(Product product) {
-		//IMPLEMENT
-		return 5;
-		
-		
+    public int readQuantityAvailable(Product product) {
+		int quantity = 0;
+		try {
+			DbClassProduct dbclass = new DbClassProduct();
+			quantity = dbclass.readProduct(product.getProductId()).getQuantityAvail();
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+		}
+			
+		return quantity;
 	}
+	
 	@Override
 	public Catalog getCatalogFromName(String catName) throws BackendException {
 		// stubbing
@@ -99,26 +105,35 @@ public class ProductSubsystemFacade implements ProductSubsystem {
     	}
 	}
 	@Override
-	public void saveNewProduct(Product product) throws BackendException {
-		// TODO Auto-generated method stub
+//	public void saveNewProduct(Product product) throws BackendException {
+//		// TODO Auto-generated method stub
+//		try {
+//		DbClassProduct dbclass = new DbClassProduct();
+//		dbclass.saveNewProduct(product);
+//		}
+//		catch(DatabaseException e) {
+//    		throw new BackendException(e);
+//    	}
+//	}
+	public Integer saveNewProduct(Product product) throws BackendException {
+		Integer productId = -1;
+		
+		DbClassProduct dbClass = new DbClassProduct();
 		try {
-		DbClassProduct dbclass = new DbClassProduct();
-		dbclass.saveNewProduct(product);
+			productId = dbClass.saveNewProduct(product, product.getCatalog());
+		} catch (DatabaseException e) {
+			e.printStackTrace();
 		}
-		catch(DatabaseException e) {
-    		throw new BackendException(e);
-    	}
+		
+		return productId;
 	}
 	@Override
-	public void deleteProduct(Product product, Catalog cat) throws BackendException {
-		// TODO Auto-generated method stub
+	public void deleteProduct(Product product) throws BackendException {
+		DbClassProduct dbClass = new DbClassProduct();
 		try {
-	DbClassProduct dbclass = new DbClassProduct();
-	dbclass.readProductList(cat).remove(product);
-	
-	}
-		catch(DatabaseException e) {
-    		throw new BackendException(e);
+			dbClass.deleteProduct(product);
+		} catch (DatabaseException e) {
+			e.printStackTrace();
 		}
 	}
 //	@Override

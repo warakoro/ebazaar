@@ -17,6 +17,7 @@ import middleware.exceptions.DatabaseException;
 import middleware.externalinterfaces.DataAccessSubsystem;
 import middleware.externalinterfaces.DbClass;
 import middleware.externalinterfaces.DbConfigKey;
+import business.Util;
 import business.externalinterfaces.Catalog;
 import business.externalinterfaces.Product;
 import business.externalinterfaces.ProductFromGui;
@@ -37,6 +38,9 @@ class DbClassProduct implements DbClass {
 	private String queryType;
 	private String query;
 	private Product product;
+	private String catalogName;
+	private String productName;
+	private Integer catalogId;
 	private String description;
 	private List<Product> productList;
 	Catalog catalog;
@@ -46,6 +50,7 @@ class DbClassProduct implements DbClass {
 	private final String READ_PRODUCT = "ReadProduct";
 	private final String READ_PROD_LIST = "ReadProdList";
 	private final String SAVE_NEW_PROD = "SaveNewProd";
+	private final String DELETE_PRODUCT = "DeleteProduct";
 
 	public void buildQuery() {
 		if (queryType.equals(LOAD_PROD_TABLE)) {
@@ -57,7 +62,9 @@ class DbClassProduct implements DbClass {
 		} else if (queryType.equals(SAVE_NEW_PROD)) {
 			buildSaveNewQuery();
 		}
-
+		else if (queryType.equals(DELETE_PRODUCT)) {
+			buildDeleteProductQuery();
+		}
 	}
 
 	private void buildProdTableQuery() {
@@ -74,6 +81,12 @@ class DbClassProduct implements DbClass {
 
 	private void buildSaveNewQuery() {
 		//implement
+		//query = "INSERT INTO productsdb(productid, catalogid, productname, totalquantity, priceperunit, mfgdate) " + "VALUES (" product.getProductId()+ "," +catalog.getId()+","+ product.getProductName() +","+ product.getQuantityAvail()+","+ product.getUnitPrice()+","+ Util.localDateAsString(product.getMfgDate()")"
+		query = "INSERT INTO Product (productid, catalogid, productname, totalquantity, priceperunit, mfgdate, description) " +
+				"VALUES (NULL, " + catalog.getId() + ", '" + product.getProductName() + "', " + product.getQuantityAvail() + ", " + product.getUnitPrice() + ", '" + Util.localDateAsString(product.getMfgDate()) + "', '" + product.getDescription() + "')";
+	}
+	private void buildDeleteProductQuery() {
+		query = "DELETE FROM Product WHERE productid = " + productId;
 	}
 
 	public TwoKeyHashMap<Integer, String, Product> readProductTable()
@@ -128,17 +141,20 @@ class DbClassProduct implements DbClass {
 	 * Database columns: productid, productname, totalquantity, priceperunit,
 	 * mfgdate, catalogid, description
 	 */
-	public void saveNewProduct(Product product) throws DatabaseException {
-		//implement
-		//saves new produt details entered from the GUI.
-		try {
-			queryType = SAVE_NEW_PROD;
-	    	dataAccessSS.saveWithinTransaction(this);
-		}
-		catch(Exception e) {
-			throw new DatabaseException(e);
-		}
+	public Integer saveNewProduct(Product product, Catalog catalog) throws DatabaseException {
+		this.product = product;
+		this.catalog = catalog;
+		queryType = SAVE_NEW_PROD;
+		return dataAccessSS.saveWithinTransaction(this);
 	}
+
+	public void deleteProduct(Product product) throws DatabaseException {
+		this.productId = product.getProductId();
+		this.
+		queryType = DELETE_PRODUCT;
+		dataAccessSS.deleteWithinTransaction(this);
+	}
+	
 
 	public void populateEntity(ResultSet resultSet) throws DatabaseException {
 		if (queryType.equals(LOAD_PROD_TABLE)) {

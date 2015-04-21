@@ -34,10 +34,10 @@ public interface ProductSubsystem {
 	public void saveNewCatalog(Catalog cat) throws BackendException;
 
 	/** saves a new product obtained from user input */
-	public void saveNewProduct(Product product) throws BackendException;
+	public Integer saveNewProduct(Product product) throws BackendException;
 
 	/** deletes a product obtained from user input */
-	public void deleteProduct(Product product, Catalog cat) throws BackendException;
+	public void deleteProduct(Product product) throws BackendException;
 	
 	/** deletes a catalog obtained from user input */
 	public void deleteCatalog(Catalog catalog) throws BackendException;

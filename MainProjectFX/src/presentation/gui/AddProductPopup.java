@@ -108,7 +108,7 @@ public class AddProductPopup extends Popup {
 		btnBox.getChildren().add(cancelButton);
 		ManageProductsUIControl.INSTANCE.setAddProductWindowInfo(this);
 		addButton.setOnAction(ManageProductsUIControl.INSTANCE.getAddProductPopupHandler());
-		addButton.setOnAction(ManageProductsUIControl.INSTANCE.getAddProductPopupHandler());
+		//addButton.setOnAction(ManageProductsUIControl.INSTANCE.getAddProductPopupHandler());
 	
 //		addButton.setOnAction(evt -> {
 //			//Rules should be managed in a more maintainable way
@@ -149,9 +149,9 @@ public class AddProductPopup extends Popup {
 	void setBackground(Color color) {
 		topLevel.backgroundProperty().set(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
 	}
-	public MaintainProductsWindow getMaintainProductsWindow() {
-		return maintainProductsWindow;
-	}
+//	public MaintainProductsWindow getMaintainProductsWindow() {
+//		return maintainProductsWindow;
+//	}
 	public String getCatalogName() {
 		return catalogName.getText();
 	}
