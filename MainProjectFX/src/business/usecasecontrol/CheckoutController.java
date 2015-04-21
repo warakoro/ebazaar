@@ -1,77 +1,80 @@
 package business.usecasecontrol;
 
-import java.util.logging.Logger;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-
-
+import presentation.data.BrowseSelectData;
 import business.BusinessConstants;
 import business.SessionCache;
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
 import business.exceptions.RuleException;
 import business.externalinterfaces.Address;
+import business.externalinterfaces.CartItem;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerSubsystem;
+import business.externalinterfaces.ShoppingCart;
 import business.externalinterfaces.ShoppingCartSubsystem;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
-import presentation.data.BrowseSelectData;
 
-
-public enum CheckoutController  {
+public enum CheckoutController {
 	INSTANCE;
-	CustomerSubsystem cust = 
-			(CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
-	
+	CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+			.get(BusinessConstants.CUSTOMER);
 	private static final Logger LOG = Logger.getLogger(CheckoutController.class
 			.getPackage().getName());
-	
 	ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
-		
+
 	public void runShoppingCartRules() throws RuleException, BusinessException {
-		//implement
+		// implement
 		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
-		 sc.runShoppingCartRules();	
+		sc.runShoppingCartRules();
 	}
-	
-	public void runPaymentRules(Address addr, CreditCard cc) throws RuleException, BusinessException {
-		//implement
-		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+
+	public void runPaymentRules(Address addr, CreditCard cc)
+			throws RuleException, BusinessException {
+		// implement
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+				.get(BusinessConstants.CUSTOMER);
 		cust.runPaymentRules(addr, cc);
 	}
-	
-	public Address runAddressRules(Address addr) throws RuleException, BusinessException {
-		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+
+	public Address runAddressRules(Address addr) throws RuleException,
+			BusinessException {
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+				.get(BusinessConstants.CUSTOMER);
 		return cust.runAddressRules(addr);
 	}
-	
+
 	/** Asks the ShoppingCart Subsystem to run final order rules */
-	public void runFinalOrderRules()throws RuleException, BusinessException {
-		//implement
+	public void runFinalOrderRules()
+			throws RuleException, BusinessException {
+		// implement
 		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
-		 sc.runFinalOrderRules();	
-	}	
-	
-	/** Asks Customer Subsystem to check credit card against 
-	 *  Credit Verification System 
+		sc.runFinalOrderRules();
+	}
+
+	/**
+	 * Asks Customer Subsystem to check credit card against Credit Verification
+	 * System
 	 */
 	public void verifyCreditCard() throws BusinessException {
-		//implement
+		// implement
 		ShoppingCartSubsystem sc = ShoppingCartSubsystemFacade.INSTANCE;
-		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
-		cust.checkCreditCard(sc.getLiveCart().getPaymentInfo()); 
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+				.get(BusinessConstants.CUSTOMER);
+		cust.checkCreditCard(sc.getLiveCart().getPaymentInfo());
 	}
-	
+
 	public void saveNewAddress(Address addr) throws BackendException {
-		
-		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);		
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+				.get(BusinessConstants.CUSTOMER);
 		cust.saveNewAddress(addr);
 	}
-	
+
 	/** Asks Customer Subsystem to submit final order */
-	
 	public void submitFinalOrder() throws BackendException {
 		// implement
 		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
@@ -79,10 +82,10 @@ public enum CheckoutController  {
 		BrowseSelectData.INSTANCE.updateShoppingCart();
 		cust.submitOrder();
 	}
-	
-	
+
 	public List<Address> retrieveShippingAddresses() {
-		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+				.get(BusinessConstants.CUSTOMER);
 		try {
 			List<Address> allAddresses = new ArrayList();
 			if (cust != null) {
@@ -101,7 +104,8 @@ public enum CheckoutController  {
 	}
 
 	public List<Address> retrieveBillingAddresses() {
-		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
+				.get(BusinessConstants.CUSTOMER);
 		try {
 			List<Address> allAddresses = new ArrayList();
 			if(cust !=null){

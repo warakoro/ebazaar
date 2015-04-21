@@ -4,7 +4,6 @@ import java.util.logging.Logger;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.text.Text;
@@ -52,12 +51,13 @@ public enum CheckoutUIControl {
 	private class ProceedFromCartToShipBill implements
 			EventHandler<ActionEvent>, Callback {
 		CheckoutData data = CheckoutData.INSTANCE;
+
 		public void doUpdate() {
 			shippingBillingWindow = new ShippingBillingWindow();
 			CustomerProfile custProfile = data.getCustomerProfile();
 			Address defaultShipAddress = data.getDefaultShippingData();
 			Address defaultBillAddress = data.getDefaultBillingData();
-			
+
 			shippingBillingWindow.setShippingAddress(custProfile.getFirstName()
 					+ " " + custProfile.getLastName(),
 					defaultShipAddress.getStreet(),
@@ -70,45 +70,45 @@ public enum CheckoutUIControl {
 					defaultBillAddress.getState(), defaultBillAddress.getZip());
 			shippingBillingWindow.show();
 		}
+
 		@Override
 		public void handle(ActionEvent evt) {
 			ShoppingCartWindow.INSTANCE.clearMessages();
 			ShoppingCartWindow.INSTANCE.setTableAccessByRow();
 			ShoppingCartWindow.INSTANCE.hide();
-			
+
 			boolean rulesOk = true;
-			/* check that cart is not empty before going to next screen */	
-			
-//			try {
-//				usecaseControl.runShoppingCartRules();
-//			} catch (RuleException e) {
-//				//handle
-//			} catch (BusinessException e) {
-//				//handle
-//			}
-	
+			/* check that cart is not empty before going to next screen */
+
+			// try {
+			// usecaseControl.runShoppingCartRules();
+			// } catch (RuleException e) {
+			// //handle
+			// } catch (BusinessException e) {
+			// //handle
+			// }
+
 			if (rulesOk) {
 				boolean isLoggedIn = DataUtil.isLoggedIn();
-				shippingBillingWindow = new ShippingBillingWindow();
+
 				if (!isLoggedIn) {
-					LoginUIControl loginControl 
-					  = new LoginUIControl(shippingBillingWindow, ShoppingCartWindow.INSTANCE, this);
+					LoginUIControl loginControl = new LoginUIControl(
+							shippingBillingWindow, ShoppingCartWindow.INSTANCE,
+							this);
 					loginControl.startLogin();
 				} else {
 					doUpdate();
-				}			
+				}
 			}
 
 		}
+
 		@Override
 		public Text getMessageBar() {
 			return ShoppingCartWindow.INSTANCE.getMessageBar();
 		}
 	}
-	
-	
 
-	
 	public ProceedFromCartToShipBill getProceedFromCartToShipBill() {
 		return new ProceedFromCartToShipBill();
 	}
@@ -180,7 +180,7 @@ public enum CheckoutUIControl {
 								.saveNewAddress(cleansedShipAddress);
 					} catch (BackendException e) {
 						shippingBillingWindow
-								.displayError("New shipping address could not be saved. Message: "
+								.displayError("New shipping address not saved. Message: "
 										+ e.getMessage());
 						rulesOk = false;
 					}
@@ -191,7 +191,7 @@ public enum CheckoutUIControl {
 								.saveNewAddress(cleansedBillAddress);
 					} catch (BackendException e) {
 						shippingBillingWindow
-								.displayError("New billing address could not be saved. Message: "
+								.displayError("New billing address not saved. Message: "
 										+ e.getMessage());
 						rulesOk = false;
 					}
@@ -208,6 +208,7 @@ public enum CheckoutUIControl {
 			}
 		}
 	}
+
 	public ProceedToPaymentHandler getProceedToPaymentHandler() {
 		return new ProceedToPaymentHandler();
 	}
@@ -274,33 +275,23 @@ public enum CheckoutUIControl {
 				CheckoutController.INSTANCE
 						.setPaymentOnLiveCart(paymentWindow
 								.getCreditCardFromWindow());
+				// CheckoutController.INSTANCE.verifyCreditCard();
 
+				paymentWindow.clearMessages();
+				paymentWindow.hide();
+				termsWindow = new TermsWindow();
+				termsWindow.show();
 			} catch (RuleException e) {
 				paymentWindow.displayError(e.getMessage());
 			} catch (BusinessException e) {
 				paymentWindow.displayError(ErrorMessages.DATABASE_ERROR);
 			}
-			
-			 try {
-				CheckoutController.INSTANCE.verifyCreditCard();
-				paymentWindow.clearMessages();
-				paymentWindow.hide();
-				termsWindow = new TermsWindow();
-				termsWindow.show();
-			} catch (BusinessException e) {
-				// TODO Auto-generated catch block
-				LOG.severe(e.getMessage());
-				paymentWindow.displayError(e.getMessage());
-			}
-
-			
 		}
 	}
 
 	public ProceedToTermsHandler getProceedToTermsHandler() {
 		return new ProceedToTermsHandler();
 	}
-
 
 	// handlers for TermsWindow
 
@@ -341,9 +332,8 @@ public enum CheckoutUIControl {
 				finalOrderWindow.displayError(e1.getMessage());
 			} catch (BusinessException e1) {
 				// TODO Auto-generated catch block
-			    finalOrderWindow.displayError(e1.getMessage());
+				finalOrderWindow.displayError(e1.getMessage());
 			}
-		
 			try {
 				orderCompleteWindow = new OrderCompleteWindow();
 				CheckoutController.INSTANCE.submitFinalOrder();
@@ -351,11 +341,13 @@ public enum CheckoutUIControl {
 				finalOrderWindow.clearMessages();
 				finalOrderWindow.hide();
 			} catch (BackendException e) {
-				LOG.severe("e.getMessage()");
+				LOG.severe(e.getMessage());
 			}
+
 		}
+
 	}
-		
+
 	public SubmitHandler getSubmitHandler() {
 		return new SubmitHandler();
 	}
@@ -385,31 +377,18 @@ public enum CheckoutUIControl {
 		return new ToShoppingCartFromFinalOrderHandler();
 	}
 
-	// handlers for OrderCompleteWindow 
+	// handlers for OrderCompleteWindow
 
 	private class ContinueFromOrderCompleteHandler implements
-	EventHandler<ActionEvent> {
-@Override
-public void handle(ActionEvent evt) {
-	try {
-		CatalogListWindow catalogWindow = CatalogListWindow
-				.getInstance(BrowseSelectUIControl.INSTANCE
-						.getPrimaryState(), FXCollections
-						.observableList(BrowseSelectData.INSTANCE
-								.getCatalogList()));
-		catalogWindow.show();
-		orderCompleteWindow.hide();
-	} catch (BackendException e) {
-		// TODO Auto-generated catch block
-		LOG.severe(e.getMessage());
-	}
-
-}
-}
-
-
-	public ContinueFromOrderCompleteHandler getContinueFromOrderCompleteHandler() {
-		return new ContinueFromOrderCompleteHandler();
+			EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent evt) {
+			CatalogListWindow.getInstance().show();
+			orderCompleteWindow.hide();
 		}
 	}
 
+	public ContinueFromOrderCompleteHandler getContinueFromOrderCompleteHandler() {
+		return new ContinueFromOrderCompleteHandler();
+	}
+}
