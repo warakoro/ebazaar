@@ -167,7 +167,7 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 	
 	public static ShoppingCart createTestShoppingCart(){
 		ShoppingCartImpl shoppingCart = new ShoppingCartImpl(new ArrayList<CartItem>());
-		shoppingCart.setCartId("5");
+		shoppingCart.setCartId("1");
 		return shoppingCart;
 	}
 }
