@@ -171,7 +171,7 @@ class DbClassOrder implements DbClass {
 		 cc.getCardNum()+"','"+
 		 cc.getCardType()+"','"+
 		 cc.getExpirationDate()+"','"+
-		 GuiUtils.localDateAsString(order.getOrderDate())+"',"+
+		 order.getOrderDate()+"',"+
 		 order.getTotalPrice()+")";
 		 }
 
