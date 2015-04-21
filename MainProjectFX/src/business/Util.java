@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 
 import presentation.data.CartItemPres;
 import presentation.data.CatalogPres;
@@ -18,6 +20,8 @@ import business.ordersubsystem.OrderImpl;
 import business.shoppingcartsubsystem.ShoppingCartSubsystemFacade;
 
 public class Util {
+	
+	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	private final static String REL_RULES_PATH = "business/rulefiles";
 	public static BufferedReader pathToRules(ClassLoader classLoader, String filename) throws IOException {
 	    URL url = classLoader.getResource(REL_RULES_PATH + "/" + filename);
@@ -67,5 +71,9 @@ public class Util {
 		                         op.setOrder((OrderImpl) ord); return op;})
 					  .collect(Collectors.toList());
 				
+	}
+	
+	public static String localDateAsString(LocalDate date) {  //pattern: "MM/dd/yyyy"
+		return date.format(DateTimeFormatter.ofPattern(DATE_PATTERN));
 	}
 }
