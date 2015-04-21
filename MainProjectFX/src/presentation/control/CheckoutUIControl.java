@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.text.Text;
@@ -197,10 +198,9 @@ public enum CheckoutUIControl {
 					}
 				}
 				if (rulesOk) {
-					CheckoutController.INSTANCE
-							.setBillingShippingOnLiveCart(
-									shippingBillingWindow.getBillingAddress(),
-									shippingBillingWindow.getShippingAddress());
+					CheckoutController.INSTANCE.setBillingShippingOnLiveCart(
+							shippingBillingWindow.getBillingAddress(),
+							shippingBillingWindow.getShippingAddress());
 					paymentWindow = new PaymentWindow();
 					paymentWindow.show();
 					shippingBillingWindow.hide();
@@ -272,9 +272,8 @@ public enum CheckoutUIControl {
 				CheckoutController.INSTANCE.runPaymentRules(
 						shippingBillingWindow.getBillingAddress(),
 						paymentWindow.getCreditCardFromWindow());
-				CheckoutController.INSTANCE
-						.setPaymentOnLiveCart(paymentWindow
-								.getCreditCardFromWindow());
+				CheckoutController.INSTANCE.setPaymentOnLiveCart(paymentWindow
+						.getCreditCardFromWindow());
 				// CheckoutController.INSTANCE.verifyCreditCard();
 
 				paymentWindow.clearMessages();
@@ -379,12 +378,27 @@ public enum CheckoutUIControl {
 
 	// handlers for OrderCompleteWindow
 
+	/*
+	 * private class ContinueFromOrderCompleteHandler implements
+	 * EventHandler<ActionEvent> {
+	 * 
+	 * @Override public void handle(ActionEvent evt) {
+	 * CatalogListWindow.getInstance().show(); orderCompleteWindow.hide(); } }
+	 */
+
 	private class ContinueFromOrderCompleteHandler implements
 			EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent evt) {
-			CatalogListWindow.getInstance().show();
-			orderCompleteWindow.hide();
+			CatalogListWindow catList;
+			try {
+				catList = CatalogListWindow.getInstance(orderCompleteWindow,
+						FXCollections.observableList(BrowseSelectData.INSTANCE
+								.getCatalogList()));
+				catList.show();
+			} catch (BackendException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
