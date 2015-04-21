@@ -2,6 +2,7 @@ package business.usecasecontrol;
 
 import java.util.logging.Logger;
 
+import middleware.exceptions.DatabaseException;
 import business.BusinessConstants;
 import business.SessionCache;
 import business.exceptions.BackendException;
@@ -52,9 +53,12 @@ public enum CheckoutController  {
 		cust.saveNewAddress(addr);
 	}
 	
-	/** Asks Customer Subsystem to submit final order */
-	public void submitFinalOrder() throws BackendException {
+	/** Asks Customer Subsystem to submit final order 
+	 * @throws DatabaseException */
+	public void submitFinalOrder() throws BackendException, DatabaseException {
 		//implement
+		CustomerSubsystem css= (CustomerSubsystem)SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
+		css.submitOrder();
 	}
 
 

@@ -2,6 +2,7 @@
 package business.externalinterfaces;
 import java.util.List;
 
+import middleware.exceptions.DatabaseException;
 import business.exceptions.BackendException;
 import business.exceptions.BusinessException;
 import business.exceptions.RuleException;
@@ -71,8 +72,9 @@ public interface CustomerSubsystem {
      * read from the database). Used by other subsystems
      * to read current user's order history (not used during login process)
      * @throws BackendException 
+     * @throws DatabaseException 
      * */
-    public List<Order> getOrderHistory() throws BackendException;
+    public List<Order> getOrderHistory() throws BackendException, DatabaseException;
     
     
     
@@ -96,8 +98,9 @@ public interface CustomerSubsystem {
     /** 
      *  Called when user submits final order -- customer sends its shopping cart to order subsystem
 	 *  and order subsystem extracts items from shopping cart and prepares order
+     * @throws DatabaseException 
 	 */
-    public void submitOrder() throws BackendException;
+    public void submitOrder() throws BackendException, DatabaseException;
     
     /**
      * After an order is submitted, the list of orders cached in CustomerSubsystemFacade

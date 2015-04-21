@@ -60,7 +60,7 @@ public class OrderItemImpl implements OrderItem {
 
 	@Override
 	public int getProductId() {
-		return -1;
+		return productId;
 	}
 
 	@Override

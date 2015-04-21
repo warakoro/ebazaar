@@ -3,6 +3,7 @@ package business.usecasecontrol;
 
 import java.util.List;
 
+import middleware.exceptions.DatabaseException;
 import business.BusinessConstants;
 import business.SessionCache;
 import business.exceptions.BackendException;
@@ -18,7 +19,7 @@ import business.ordersubsystem.OrderSubsystemFacade;
 public enum ViewOrdersController   {
 	INSTANCE;
 	
-	public List<Order> getOrderHistory() throws BackendException{
+	public List<Order> getOrderHistory() throws BackendException, DatabaseException{
 		CustomerSubsystem css = (CustomerSubsystem) SessionCache.getInstance().get(BusinessConstants.CUSTOMER);
 		OrderSubsystem pss = new OrderSubsystemFacade(css.getCustomerProfile());
 		return pss.getOrderHistory();

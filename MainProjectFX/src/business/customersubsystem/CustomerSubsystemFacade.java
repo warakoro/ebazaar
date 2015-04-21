@@ -118,7 +118,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	 */
     public List<Address> getAllAddresses() throws BackendException {
     	/*Stubbing*/ 
-    	List<Address> listOfAddress = new ArrayList();
+    	List<Address> listOfAddress = new ArrayList<Address>();
     	Address add1 = new AddressImpl("1000 N 4th street", "Fairfield", "Iowa", "52557", false, true);
     	Address add2 = new AddressImpl("1000 Bullington street", "New York City", "New York", "52557", false, true);
     	listOfAddress.add(add1);
@@ -161,7 +161,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	}
 
 	@Override
-	public List<Order> getOrderHistory() throws BackendException {
+	public List<Order> getOrderHistory() throws BackendException, DatabaseException {
 		/*Stubbing*/
 	/*	List<Order> orderList = new ArrayList();
 		Order ord1 = new OrderImpl();
@@ -197,8 +197,8 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	}
 
 	@Override
-	public void submitOrder() throws BackendException {
-		// TODO Auto-generated method stub
+	public void submitOrder() throws BackendException, DatabaseException {		
+		orderSubsystem.submitOrder(ShoppingCartSubsystemFacade.INSTANCE.getLiveCart());
 		
 	}
 

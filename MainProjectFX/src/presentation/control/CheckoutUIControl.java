@@ -2,8 +2,10 @@ package presentation.control;
 
 import java.util.logging.Logger;
 
+import middleware.exceptions.DatabaseException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.text.Text;
@@ -303,6 +305,13 @@ public enum CheckoutUIControl {
 	private class SubmitHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent evt) {
+			try {
+				CheckoutController.INSTANCE.submitFinalOrder();
+			} catch (BackendException | DatabaseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			orderCompleteWindow = new OrderCompleteWindow();
 			orderCompleteWindow.show();
 			finalOrderWindow.clearMessages();
@@ -346,8 +355,13 @@ public enum CheckoutUIControl {
 			EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent evt) {
-			CatalogListWindow.getInstance().show();
-			orderCompleteWindow.hide();
+			CatalogListWindow catList;
+			try {
+			catList = CatalogListWindow.getInstance(orderCompleteWindow, FXCollections.observableList(BrowseSelectData.INSTANCE.getCatalogList()));
+			catList.show();
+			} catch (BackendException e) {			
+			e.printStackTrace();
+			}
 		}
 	}
 
