@@ -4,6 +4,7 @@ package business.usecasecontrol;
 import java.util.ArrayList;
 import java.util.List;
 
+import middleware.exceptions.DatabaseException;
 import presentation.data.OrderPres;
 import business.customersubsystem.CustomerSubsystemFacade;
 import business.exceptions.BackendException;
@@ -34,7 +35,7 @@ public class ViewOrdersController   {
 				orderPresList.add(orderPres);				
 				
 			}
-		} catch (BackendException e) {
+		} catch (BackendException | DatabaseException e) {
 			e.printStackTrace();
 		}
 		

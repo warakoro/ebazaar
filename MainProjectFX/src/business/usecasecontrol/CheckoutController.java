@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import middleware.exceptions.DatabaseException;
 import presentation.data.BrowseSelectData;
 import business.BusinessConstants;
 import business.SessionCache;
@@ -80,7 +81,12 @@ public enum CheckoutController {
 		CustomerSubsystem cust = (CustomerSubsystem) SessionCache.getInstance()
 				.get(BusinessConstants.CUSTOMER);
 		BrowseSelectData.INSTANCE.updateShoppingCart();
-		cust.submitOrder();
+		try {
+			cust.submitOrder();
+		} catch (DatabaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public List<Address> retrieveShippingAddresses() {
