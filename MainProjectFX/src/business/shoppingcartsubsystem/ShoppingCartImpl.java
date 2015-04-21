@@ -108,7 +108,15 @@ class ShoppingCartImpl implements ShoppingCart {
         }
     	return sum;
     }
-    
+	
+	@Override
+	public String getCartId() {
+		return cartId;
+	}
+	
+	
+
+	
     
  
 }

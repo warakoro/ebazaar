@@ -15,4 +15,9 @@ public interface ShoppingCart {
 
     //setters for testing
     
+    public String getCartId();
+    
+    
 }
+    
+
