@@ -24,6 +24,9 @@ public class DefaultData {
 	public static final CatalogPres BOOKS_CAT_PRES = new CatalogPres();
 	public static final CatalogPres CLOTHES_CAT_PRES = new CatalogPres();
 	public static final int DEFAULT_QUANTITY_AVAILABLE = 4;
+	public static final int DEFAULT_ID = 1;
+	public static final int DEFAULT_ID2 = 2;
+	public static final int DEFAULT_ID3 = 2;
 	static {
 		BOOKS_CATALOG = ProductSubsystemFacade.createCatalog(1,  "Books");
 		CLOTHES_CATALOG = ProductSubsystemFacade.createCatalog(2,  "Clothes"); 
@@ -38,21 +41,21 @@ public class DefaultData {
 	};
 	
 	public static final Product MESSIAH_BOOK 
-	  = ProductSubsystemFacade.createProduct(BOOKS_CATALOG,"Messiah Of Dune", LocalDate.of(2000, 11, 11), 20, 15.00);
+	  = ProductSubsystemFacade.createProduct(BOOKS_CATALOG,DEFAULT_ID,"Messiah Of Dune", LocalDate.of(2000, 11, 11), 20, 15.00);
 	public static final Product GONE_BOOK 
-	  =  ProductSubsystemFacade.createProduct(BOOKS_CATALOG,"Gone with the Wind", LocalDate.of(1995, 12, 5), 15, 12.00);
+	  =  ProductSubsystemFacade.createProduct(BOOKS_CATALOG,DEFAULT_ID2,"Gone with the Wind", LocalDate.of(1995, 12, 5), 15, 12.00);
 	public static final Product GARDEN_BOOK 
-	  = ProductSubsystemFacade.createProduct(BOOKS_CATALOG,"Garden of Rama", LocalDate.of(2005, 1, 1), 5, 18.00);
+	  = ProductSubsystemFacade.createProduct(BOOKS_CATALOG,DEFAULT_ID3,"Garden of Rama", LocalDate.of(2005, 1, 1), 5, 18.00);
 	public static final Product PANTS 
-	  = ProductSubsystemFacade.createProduct(CLOTHES_CATALOG, "Pants", LocalDate.of(2000, 11, 1), 20, 15.00);
+	  = ProductSubsystemFacade.createProduct(CLOTHES_CATALOG, DEFAULT_ID, "Pants", LocalDate.of(2000, 11, 1), 20, 15.00);
 	public static final Product SKIRTS 
-	  = ProductSubsystemFacade.createProduct(CLOTHES_CATALOG, "Skirts", LocalDate.of(1995, 1, 5), 15, 12.00);
+	  = ProductSubsystemFacade.createProduct(CLOTHES_CATALOG,DEFAULT_ID2, "Skirts", LocalDate.of(1995, 1, 5), 15, 12.00);
 	public static final Product TSHIRTS 
-	  = ProductSubsystemFacade.createProduct(CLOTHES_CATALOG, "T-Shirts", LocalDate.of(2003, 6, 18), 10, 22.00);
+	  = ProductSubsystemFacade.createProduct(CLOTHES_CATALOG, DEFAULT_ID3,"T-Shirts", LocalDate.of(2003, 6, 18), 10, 22.00);
 	public static final HashMap<String, Product> PRODNAME_TO_PRODUCT = new HashMap<String, Product>() {
 		{
 			put("Messiah Of Dune",MESSIAH_BOOK);
-			put("Gone with the Wind",GONE_BOOK);
+		put("Gone with the Wind",GONE_BOOK);
 			put("Garden of Rama",GARDEN_BOOK);
 			put("Pants", PANTS);
 			put("Skirts",SKIRTS);

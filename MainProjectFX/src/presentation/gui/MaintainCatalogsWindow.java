@@ -140,27 +140,28 @@ public class MaintainCatalogsWindow extends Stage implements MessageableWindow {
 		btnBox.getChildren().add(addButton);
 		btnBox.getChildren().add(deleteButton);
 		btnBox.getChildren().add(backButton);
-	
-		deleteButton.setOnAction(evt -> {
-			TableUtil.selectByRow(table);
-		    ObservableList<CatalogPres> tableItems = table.getItems();
-		    ObservableList<Integer> selectedIndices = table.getSelectionModel().getSelectedIndices();
-		    ObservableList<CatalogPres> selectedItems = table.getSelectionModel()
-					.getSelectedItems();
-		    if(tableItems.isEmpty()) {
-		    	messageBar.setText("Nothing to delete!");
-		    } else if (selectedIndices == null || selectedIndices.isEmpty()) {
-		    	messageBar.setText("Please select a row.");
-		    } else {
-		    	boolean result =  ManageProductsData.INSTANCE.removeFromCatalogList(selectedItems);
-			    if(result) {
-			    	table.setItems(ManageProductsData.INSTANCE.getCatalogList());
-			    	clearMessages();
-			    } else {
-			    	displayInfo("No items deleted.");
-			    }
-		    }
-		});
+		ManageProductsUIControl.INSTANCE.setMaintainCatalogsWindow(this);
+	deleteButton.setOnAction(ManageProductsUIControl.INSTANCE.getDeleteCatalogHandler());
+//		deleteButton.setOnAction(evt -> {
+//			TableUtil.selectByRow(table);
+//		    ObservableList<CatalogPres> tableItems = table.getItems();
+//		    ObservableList<Integer> selectedIndices = table.getSelectionModel().getSelectedIndices();
+//		    ObservableList<CatalogPres> selectedItems = table.getSelectionModel()
+//					.getSelectedItems();
+//		    if(tableItems.isEmpty()) {
+//		    	messageBar.setText("Nothing to delete!");
+//		    } else if (selectedIndices == null || selectedIndices.isEmpty()) {
+//		    	messageBar.setText("Please select a row.");
+//		    } else {
+//		    	boolean result =  ManageProductsData.INSTANCE.removeFromCatalogList(selectedItems);
+//			    if(result) {
+//			    	table.setItems(ManageProductsData.INSTANCE.getCatalogList());
+//			    	clearMessages();
+//			    } else {
+//			    	displayInfo("No items deleted.");
+//			    }
+//		    }
+//		});
 		backButton.setOnAction(ManageProductsUIControl.INSTANCE.getBackButtonHandler());
 		
 		addButton.setOnAction(evt -> {
@@ -177,5 +178,12 @@ public class MaintainCatalogsWindow extends Stage implements MessageableWindow {
 	@Override
 	public Text getMessageBar() {
 		return messageBar;
+	}
+	public void setMessageBar(String messageBar) {
+		this.messageBar.setText(messageBar);
+	}
+
+	public TableView<CatalogPres> getTable() {
+		return table;
 	}
 }

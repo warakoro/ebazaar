@@ -113,10 +113,10 @@ public class TwoKeyHashMap<K,L,V> implements Cloneable {
 		//load up some Products, as if from the db
 		//Catalog c, String name, 
 		//LocalDate date, int numAvail, double price
-		Product prod1 = ProductSubsystemFacade.createProduct(DefaultData.CLOTHES_CATALOG, "Shirt", GuiUtils.localDateForString("11/11/2001"), 5, 20.00);
+		Product prod1 = ProductSubsystemFacade.createProduct(DefaultData.CLOTHES_CATALOG,2, "Shirt", GuiUtils.localDateForString("11/11/2001"), 5, 20.00);
 		//assume the product id is 1
 		
-		Product prod2 = ProductSubsystemFacade.createProduct(DefaultData.CLOTHES_CATALOG, "Hat", GuiUtils.localDateForString("1/1/2001"), 10, 12.00);
+		Product prod2 = ProductSubsystemFacade.createProduct(DefaultData.CLOTHES_CATALOG, 1,"Hat", GuiUtils.localDateForString("1/1/2001"), 10, 12.00);
 		//assume the product id is 2
 		
 		//now insert into a TwoKeyHashMap for later use

@@ -25,7 +25,7 @@ public class DbClassCatalogTypes implements DbClass {
     public CatalogTypesImpl getCatalogTypes() throws DatabaseException {
         queryType = GET_TYPES;
         dataAccessSS.atomicRead(this);	
-        return types;        
+        return types;       
     }
     
     public void buildQuery() {

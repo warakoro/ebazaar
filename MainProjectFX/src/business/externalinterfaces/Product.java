@@ -9,6 +9,7 @@ public interface Product {
     public int getProductId();
     
     public String getProductName();
+    public void setCatalog(Catalog catalog);
     public Catalog getCatalog();
     public int getQuantityAvail();
     public double getUnitPrice();

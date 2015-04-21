@@ -5,6 +5,7 @@ import java.util.List;
 
 
 
+
 import business.exceptions.BackendException;
 
 public interface ProductSubsystem {
@@ -30,10 +31,10 @@ public interface ProductSubsystem {
 	public Catalog getCatalogFromName(String catName) throws BackendException;
 
 	/** saves newly created catalog */
-	public void saveNewCatalog(String name) throws BackendException;
+	public void saveNewCatalog(Catalog cat) throws BackendException;
 
 	/** saves a new product obtained from user input */
-	public void saveNewProduct(Product product, Catalog catalog) throws BackendException;
+	public Integer saveNewProduct(Product product) throws BackendException;
 
 	/** deletes a product obtained from user input */
 	public void deleteProduct(Product product) throws BackendException;

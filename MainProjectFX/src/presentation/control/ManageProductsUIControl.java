@@ -1,16 +1,31 @@
 package presentation.control;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import business.exceptions.BackendException;
+import business.exceptions.BusinessException;
+import business.exceptions.UnauthorizedException;
+import business.externalinterfaces.Catalog;
+import business.externalinterfaces.Product;
+import business.usecasecontrol.ManageProductsController;
 import presentation.data.CatalogPres;
+import presentation.data.DataUtil;
+import presentation.data.DefaultData;
 import presentation.data.ManageProductsData;
 import presentation.data.ProductPres;
+import presentation.gui.AddCatalogPopup;
+import presentation.gui.AddProductPopup;
 import presentation.gui.MaintainCatalogsWindow;
 import presentation.gui.MaintainProductsWindow;
 import presentation.gui.MessageableWindow;
+import presentation.gui.ProductListWindow;
 import presentation.gui.TableUtil;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
@@ -19,7 +34,7 @@ public enum ManageProductsUIControl {
 
 	private Stage primaryStage;
 	private Callback startScreenCallback;
-
+	private ManageProductsController mpc = new ManageProductsController();
 	public void setPrimaryStage(Stage ps, Callback returnMessage) {
 		primaryStage = ps;
 		startScreenCallback = returnMessage;
@@ -28,12 +43,37 @@ public enum ManageProductsUIControl {
 	// windows managed by this class
 	MaintainCatalogsWindow maintainCatalogsWindow;
 	MaintainProductsWindow maintainProductsWindow;
-
+	AddCatalogPopup addCatalogPopup;
+	AddProductPopup addProductPopup;
+	//MaintainProductsWindow mpw;
+	
 	// Manage catalogs
-	private class MaintainCatalogsHandler implements EventHandler<ActionEvent> {
+	private class MaintainCatalogsHandler implements EventHandler<ActionEvent>, Callback {
 		@Override
 		public void handle(ActionEvent e) {
 			maintainCatalogsWindow = new MaintainCatalogsWindow(primaryStage);
+			boolean isLoggedIn = DataUtil.isLoggedIn();
+			if (!isLoggedIn) {
+				LoginUIControl loginControl = new LoginUIControl(maintainCatalogsWindow, primaryStage);
+				loginControl.startLogin();
+			} else {
+				doUpdate();
+			}
+		}
+
+		@Override
+		public Text getMessageBar() {
+			return startScreenCallback.getMessageBar();
+		}
+
+		@Override
+		public void doUpdate() {
+			try {
+	    		Authorization.checkAuthorization(maintainCatalogsWindow, DataUtil.custIsAdmin());
+	    	} catch(UnauthorizedException e) {   
+	        	displayError(e.getMessage());
+	        	return;
+	        }
 			ObservableList<CatalogPres> list = ManageProductsData.INSTANCE.getCatalogList();
 			maintainCatalogsWindow.setData(list);
 			maintainCatalogsWindow.show();
@@ -46,10 +86,32 @@ public enum ManageProductsUIControl {
 		return new MaintainCatalogsHandler();
 	}
 	
-	private class MaintainProductsHandler implements EventHandler<ActionEvent> {
+	private class MaintainProductsHandler implements EventHandler<ActionEvent>, Callback {
 		@Override
 		public void handle(ActionEvent e) {
 			maintainProductsWindow = new MaintainProductsWindow(primaryStage);
+			boolean isLoggedIn = DataUtil.isLoggedIn();
+			if (!isLoggedIn) {
+				LoginUIControl loginControl = new LoginUIControl(maintainProductsWindow, primaryStage);
+				loginControl.startLogin();
+			} else {
+				doUpdate();
+			}
+		}
+
+		@Override
+		public Text getMessageBar() {
+			return startScreenCallback.getMessageBar();
+		}
+
+		@Override
+		public void doUpdate() {
+			try {
+	    		Authorization.checkAuthorization(maintainProductsWindow, DataUtil.custIsAdmin());
+	    	} catch(UnauthorizedException e) {   
+	        	displayError(e.getMessage());
+	        	return;
+	        }
 			CatalogPres selectedCatalog = ManageProductsData.INSTANCE.getSelectedCatalog();
 			if(selectedCatalog != null) {
 				ObservableList<ProductPres> list = ManageProductsData.INSTANCE.getProductsList(selectedCatalog);
@@ -88,8 +150,165 @@ public enum ManageProductsUIControl {
 	public BackFromProdsButtonHandler getBackFromProdsButtonHandler() {
 		return new BackFromProdsButtonHandler();
 	}
+	private class AddCatalogsHandler implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent e) {		
+			if (addCatalogPopup.getId().trim().equals("")) {
+				addCatalogPopup.setMessageBar("ID field must be nonempty! \n[Type '0' to auto-generate ID.]");
+			}
+			else if (addCatalogPopup.getName().trim().equals("")) {  
+				addCatalogPopup.setMessageBar("Name field must be nonempty!");
+			}
+			else {
+				String idNewVal = addCatalogPopup.getId();
+				if (idNewVal.equals("0")) {
+					idNewVal = DefaultData.generateId(10);
+				}
+				try {
+					Catalog newCat = mpc.createCatalog(Integer.parseInt(idNewVal), addCatalogPopup.getName());
+					mpc.addCatalog(newCat);
+					CatalogPres catPres = new CatalogPres();
+					catPres.setCatalog(newCat);
+					maintainCatalogsWindow.addItem(catPres);
+					addCatalogPopup.setMessageBar("");
+					addCatalogPopup.hide();
+				} catch (BackendException be) {
+					addCatalogPopup.setMessageBar("Catalog saving fails");
+					System.out.println("Catalog save fail : " + be.getMessage());
+				}
+				
+			}	   
+		}
+	}
+	
+	public AddCatalogsHandler getAddCatalogsHandler() {
+		return new AddCatalogsHandler();
+	}
+	
+	
 
+	public void setAddCatalogWindowInfo(AddCatalogPopup catPopup) {
+		this.addCatalogPopup = catPopup;		 
+	}
+	
+	private class AddProductPopupHandler implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent e) {		
+			//Rules should be managed in a more maintainable way
+			if(addProductPopup.getId().trim().equals("")) {
+				addProductPopup.setMessageBar("Product Id field must be nonempty! \n[Type '0' to auto-generate ID.]");
+			}
+			else if(addProductPopup.getName().trim().equals("")) addProductPopup.setMessageBar("Product Name field must be nonempty!");
+			else if(addProductPopup.getManufactureDate().trim().equals("")) addProductPopup.setMessageBar("Manufacture Date field must be nonempty!");
+			else if(addProductPopup.getNumAvail().trim().equals("")) addProductPopup.setMessageBar("Number in Stock field must be nonempty!");
+			else if(addProductPopup.getUnitPrice().trim().equals("")) addProductPopup.setMessageBar("Unit Price field must be nonempty!");
+			else if(addProductPopup.getDescription().trim().equals("")) addProductPopup.setMessageBar("Description field must be nonempty!");
+			else {
+				Product newProd = null;
+				String idNewVal = addProductPopup.getId();
+				if(idNewVal.equals("0")) {
+					idNewVal = DefaultData.generateId(100);
+				} //Catalog c, Integer pi, String pn, int qa, double up, LocalDate md, String d
+				try {
+					Catalog catalog = mpc.getCatalog(addProductPopup.getCatalogName());
+					newProd = mpc.createProduct(catalog, 
+							Integer.parseInt(addProductPopup.getId()), addProductPopup.getName(), Integer.parseInt(addProductPopup.getNumAvail()), 
+							    Double.parseDouble(addProductPopup.getUnitPrice()), LocalDate.parse(addProductPopup.getManufactureDate(), DateTimeFormatter.ofPattern("MM/dd/yyyy")), 
+							    addProductPopup.getDescription());
+					
+					mpc.addProduct(newProd);;
+					ProductPres prodPres = new ProductPres();
+					prodPres.setProduct(newProd);
+					//mpc.saveProduct(newProd);
+					maintainProductsWindow.addItem(prodPres);
+					addProductPopup.setMessageBar("");
+					addProductPopup.hide();
+					
+				} catch (BusinessException be) {
+					//TODO:
+					addProductPopup.setMessageBar("Product save fail");
+				}				
+				
+			}	  	   
+		}
+	}
+	
+	public AddProductPopupHandler getAddProductPopupHandler() {
+		return new AddProductPopupHandler();
+	}
+	public void setAddProductWindowInfo(AddProductPopup productPopup) {
+		this.addProductPopup = productPopup;		
+	}
+	private class deleteProducthandler implements EventHandler<ActionEvent> {
+		public void handle(ActionEvent e) {
+			TableUtil.selectByRow(maintainProductsWindow.getTable());
+			CatalogPres selectedCatalog = ManageProductsData.INSTANCE.getSelectedCatalog();
+		    ObservableList<ProductPres> tableItems = ManageProductsData.INSTANCE.getProductsList(selectedCatalog);
+		    ObservableList<Integer> selectedIndices = maintainProductsWindow.getTable().getSelectionModel().getSelectedIndices();
+		    ObservableList<ProductPres> selectedItems = maintainProductsWindow.getTable().getSelectionModel()
+					.getSelectedItems();
+		    if(tableItems.isEmpty()) {
+		    	maintainProductsWindow.setMessageBar("Nothing to delete!");
+		    } else if (selectedIndices == null || selectedIndices.isEmpty()) {
+		    	maintainProductsWindow.setMessageBar("Please select a row.");
+		    } else {
+		    	boolean result;
+				result = ManageProductsData.INSTANCE.removeFromProductList(selectedCatalog, selectedItems);
 
+   if(result) {
+				//table.setItems(ManageProductsData.INSTANCE.getProductsList(selectedCatalog));
+				maintainProductsWindow.getTable().setItems(ManageProductsData.INSTANCE.getProductsList(selectedCatalog));
+				maintainProductsWindow.clearMessages();
+   } else {
+				maintainProductsWindow.displayInfo("No items deleted.");
+   }
+		}
+	}
+	}
+	public deleteProducthandler getDeleteProducthandler() {
+		return new deleteProducthandler();
+	}
+
+	public void setMaintainProductsWindow(MaintainProductsWindow maintainProductsWindow) {
+		this.maintainProductsWindow = maintainProductsWindow;
+	}
+	private class deleteCataloghandler implements EventHandler<ActionEvent> {
+		public void handle(ActionEvent e) {
+			TableUtil.selectByRow(maintainCatalogsWindow.getTable());
+		    ObservableList<CatalogPres> tableItems = maintainCatalogsWindow.getTable().getItems();
+		    ObservableList<Integer> selectedIndices = maintainCatalogsWindow.getTable().getSelectionModel().getSelectedIndices();
+		    ObservableList<CatalogPres> selectedItems = maintainCatalogsWindow.getTable().getSelectionModel()
+					.getSelectedItems();
+		    if(tableItems.isEmpty()) {
+		    	maintainCatalogsWindow.setMessageBar("Nothing to delete!");
+		    } else if (selectedIndices == null || selectedIndices.isEmpty()) {
+		    	maintainCatalogsWindow.setMessageBar("Please select a row.");
+		    } else {
+		    	try {
+		    	boolean result =  ManageProductsData.INSTANCE.removeFromCatalogList(selectedItems);
+			    if(result) {
+			    	maintainCatalogsWindow.getTable().setItems(ManageProductsData.INSTANCE.getCatalogList());
+			    	maintainCatalogsWindow.clearMessages();
+			    } else {
+			    	maintainCatalogsWindow.displayInfo("No items deleted.");
+			    }
+		    	}
+		    	catch (BackendException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				
+		    }
+		    }
+		}
+	}
+		public deleteCataloghandler getDeleteCatalogHandler() {
+			return new deleteCataloghandler();
+		}
+		
+	
+	public void setMaintainCatalogsWindow(MaintainCatalogsWindow maintainCatalogsWindow) {
+		this.maintainCatalogsWindow = maintainCatalogsWindow;
+	}
 	/*
 	 * private MenuItem maintainCatalogs() { MenuItem retval = new
 	 * MenuItem("Maintain Catalogs"); retval.setOnAction(evt -> {
@@ -109,4 +328,5 @@ public enum ManageProductsUIControl {
 	 * 
 	 * }); return retval; }
 	 */
-}
+	}
+
