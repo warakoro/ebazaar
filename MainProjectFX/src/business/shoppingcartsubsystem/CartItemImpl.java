@@ -109,11 +109,13 @@ public class CartItemImpl implements CartItem {
 
 	@Override
 	public void setShipmentCost(Double shipmentCost) {
+		if(shipmentCost!=null)
 		this.shipmentCost = shipmentCost;	
 	}
 
 	@Override
 	public void setTaxAmount(Double taxAmount) {
+		if(taxAmount!=null)
 		this.taxAmount = taxAmount;		
 	}
 	

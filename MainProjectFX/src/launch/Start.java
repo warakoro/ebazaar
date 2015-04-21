@@ -72,7 +72,6 @@ public class Start extends Application {
 		box.setAlignment(Pos.BASELINE_LEFT);
 		box.getChildren().add(messageBar);
 		return box;
-		
 	}
 	
 	
