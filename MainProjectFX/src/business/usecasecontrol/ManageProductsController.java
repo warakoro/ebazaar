@@ -72,4 +72,8 @@ public class ManageProductsController   {
 		 ProductSubsystem pss  = new ProductSubsystemFacade();
 		 pss.deleteProduct(product, cat);
 	 }
+	 public void deleteCatalog(Catalog catalog) throws BackendException {
+		 ProductSubsystem pss  = new ProductSubsystemFacade();
+		 pss.deleteCatalog(catalog);
+	 }
 }

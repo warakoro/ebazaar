@@ -3,14 +3,18 @@ package presentation.data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import presentation.gui.GuiUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import business.CartItemData;
+import business.Util;
+import business.exceptions.BackendException;
 import business.externalinterfaces.*;
 import business.productsubsystem.ProductSubsystemFacade;
+import business.usecasecontrol.BrowseAndSelectController;
 import business.usecasecontrol.ManageProductsController;
 
 public enum ManageProductsData {
@@ -19,6 +23,14 @@ public enum ManageProductsData {
 	private CatalogPres defaultCatalog = readDefaultCatalogFromDataSource();
 	private ManageProductsController mpc = new ManageProductsController();
 	private CatalogPres readDefaultCatalogFromDataSource() {
+//		try {
+//		return mpc.getCatalogList()
+//			    .stream()
+//			    .map(catalog -> Util.catalogToCatalogPres(catalog))
+//			    .collect(Collectors.toList()).get(0);
+//		} catch (BackendException e) {
+//			return new CatalogPres();
+//		}
 		return DefaultData.CATALOG_LIST_DATA.get(0);
 	}
 	public CatalogPres getDefaultCatalog() {
@@ -68,9 +80,12 @@ public enum ManageProductsData {
 	/** This method looks for the 0th element of the toBeRemoved list 
 	 *  and if found, removes it. In this app, removing more than one product at a time
 	 *  is  not supported.
+	 * @throws BackendException 
 	 */
-	public boolean removeFromProductList(CatalogPres cat, ObservableList<ProductPres> toBeRemoved) {
+	public boolean removeFromProductList(CatalogPres cat, ObservableList<ProductPres> toBeRemoved) throws BackendException {
+		ManageProductsController mpc = new ManageProductsController();
 		if(toBeRemoved != null && !toBeRemoved.isEmpty()) {
+			mpc.deleteProduct(toBeRemoved.get(0).getProduct(), cat.getCatalog());
 			boolean result = productsMap.get(cat).remove(toBeRemoved.get(0));
 			return result;
 		}
@@ -82,11 +97,23 @@ public enum ManageProductsData {
 
 	/** Initializes the catalogList */
 	private ObservableList<CatalogPres> readCatalogsFromDataSource() {
-		return FXCollections.observableList(DefaultData.CATALOG_LIST_DATA);
+		List<CatalogPres> catalogListPress  = new ArrayList<CatalogPres>();
+		try {
+			catalogListPress  = mpc.getCatalogList()
+				    .stream()
+				    .map(catalog -> Util.catalogToCatalogPres(catalog))
+				    .collect(Collectors.toList());
+			} catch (BackendException e) {
+				
+			}
+		
+		return FXCollections.observableList(catalogListPress);
+		//return FXCollections.observableList(DefaultData.CATALOG_LIST_DATA);
 	}
 
 	/** Delivers the already-populated catalogList to the UI */
 	public ObservableList<CatalogPres> getCatalogList() {
+		catalogList = readCatalogsFromDataSource();
 		return catalogList;
 	}
 
@@ -119,11 +146,14 @@ public enum ManageProductsData {
 	 * 
 	 * Also: If the removed catalog was being stored as the selectedCatalog,
 	 * the next item in the catalog list is set as "selected"
+	 * @throws BackendException 
 	 */
-	public boolean removeFromCatalogList(ObservableList<CatalogPres> toBeRemoved) {
+	public boolean removeFromCatalogList(ObservableList<CatalogPres> toBeRemoved) throws BackendException {
+		ManageProductsController mpc = new ManageProductsController();
 		boolean result = false;
 		CatalogPres item = toBeRemoved.get(0);
 		if (toBeRemoved != null && !toBeRemoved.isEmpty()) {
+			mpc.deleteCatalog(toBeRemoved.get(0).getCatalog());
 			result = catalogList.remove(item);
 		}
 		if(item.equals(selectedCatalog)) {

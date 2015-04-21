@@ -77,9 +77,15 @@ public class ProductSubsystemFacade implements ProductSubsystem {
 	@Override
 	public Catalog getCatalogFromName(String catName) throws BackendException {
 		// stubbing
-		CatalogTypesImpl cat = new CatalogTypesImpl();
-		int i = cat.getCatalogId(catName);
-		return cat.getCatalogs().get(i);
+		try {
+			DbClassCatalogTypes dbclass = new DbClassCatalogTypes();
+			int i = dbclass.getCatalogTypes().getCatalogId(catName);
+			return ProductSubsystemFacade.createCatalog(i, catName);
+		} catch (DatabaseException e) {
+			// TODO Auto-generated catch block
+		throw new BackendException(e);
+		}
+		
 	}
 	@Override
 	public void saveNewCatalog(Catalog cat) throws BackendException {
@@ -109,17 +115,33 @@ public class ProductSubsystemFacade implements ProductSubsystem {
 		try {
 	DbClassProduct dbclass = new DbClassProduct();
 	dbclass.readProductList(cat).remove(product);
+	
 	}
 		catch(DatabaseException e) {
     		throw new BackendException(e);
 		}
 	}
+//	@Override
+//	public void deleteCatalog(Catalog catalog) throws BackendException {
+//		// TODO Auto-generated method stub
+//		try {
+//		DbClassCatalogTypes dbClass = new DbClassCatalogTypes();
+//		dbClass.getCatalogTypes().getCatalogs().remove(catalog);
+//		}
+//		catch(DatabaseException e) {
+//    		throw new BackendException(e);
+//		}
+//	}
+	
 	@Override
 	public void deleteCatalog(Catalog catalog) throws BackendException {
 		// TODO Auto-generated method stub
-		DbClassCatalog dbclass = new DbClassCatalog();
-		
-		
-		
+		try {
+		DbClassCatalog dbClass = new DbClassCatalog();
+		dbClass.deleteCatalog(catalog);;
+		}
+		catch(DatabaseException e) {
+    		throw new BackendException(e);
+		}
 	}
 }

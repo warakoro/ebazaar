@@ -17,6 +17,7 @@ import presentation.gui.AddProductPopup;
 import presentation.gui.MaintainCatalogsWindow;
 import presentation.gui.MaintainProductsWindow;
 import presentation.gui.MessageableWindow;
+import presentation.gui.ProductListWindow;
 import presentation.gui.TableUtil;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -41,7 +42,8 @@ public enum ManageProductsUIControl {
 	MaintainProductsWindow maintainProductsWindow;
 	AddCatalogPopup addCatalogPopup;
 	AddProductPopup addProductPopup;
-
+	MaintainProductsWindow mpw;
+	
 	// Manage catalogs
 	private class MaintainCatalogsHandler implements EventHandler<ActionEvent> {
 		@Override
@@ -141,6 +143,7 @@ public enum ManageProductsUIControl {
 	public void setAddCatalogWindowInfo(AddCatalogPopup catPopup) {
 		this.addCatalogPopup = catPopup;		 
 	}
+	
 	private class AddProductPopupHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent e) {		
@@ -188,8 +191,83 @@ public enum ManageProductsUIControl {
 	public void setAddProductWindowInfo(AddProductPopup productPopup) {
 		this.addProductPopup = productPopup;		
 	}
+	private class deleteProducthandler implements EventHandler<ActionEvent> {
+		public void handle(ActionEvent e) {
+			TableUtil.selectByRow(mpw.getTable());
+			CatalogPres selectedCatalog = ManageProductsData.INSTANCE.getSelectedCatalog();
+		    ObservableList<ProductPres> tableItems = ManageProductsData.INSTANCE.getProductsList(selectedCatalog);
+		    ObservableList<Integer> selectedIndices = mpw.getTable().getSelectionModel().getSelectedIndices();
+		    ObservableList<ProductPres> selectedItems = mpw.getTable().getSelectionModel()
+					.getSelectedItems();
+		    if(tableItems.isEmpty()) {
+		    	mpw.setMessageBar("Nothing to delete!");
+		    } else if (selectedIndices == null || selectedIndices.isEmpty()) {
+		    	mpw.setMessageBar("Please select a row.");
+		    } else {
+		    	boolean result;
+				try {
+					result = ManageProductsData.INSTANCE.removeFromProductList(selectedCatalog, selectedItems);
+				
+			    if(result) {
+			    	//table.setItems(ManageProductsData.INSTANCE.getProductsList(selectedCatalog));
+			    	mpw.getTable().setItems(ManageProductsData.INSTANCE.getProductsList(selectedCatalog));
+			    	mpw.clearMessages();
+			    } else {
+			    	mpw.displayInfo("No items deleted.");
+			    }
+			    
+				} catch (BackendException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				
+		    }
+		}
+	}
+	}
+	public deleteProducthandler getDeleteProducthandler() {
+		return new deleteProducthandler();
+	}
 
-
+	public void setMaintainProductsWindow(MaintainProductsWindow maintainProductsWindow) {
+		this.mpw = maintainProductsWindow;
+	}
+	private class deleteCataloghandler implements EventHandler<ActionEvent> {
+		public void handle(ActionEvent e) {
+			TableUtil.selectByRow(maintainCatalogsWindow.getTable());
+		    ObservableList<CatalogPres> tableItems = maintainCatalogsWindow.getTable().getItems();
+		    ObservableList<Integer> selectedIndices = maintainCatalogsWindow.getTable().getSelectionModel().getSelectedIndices();
+		    ObservableList<CatalogPres> selectedItems = maintainCatalogsWindow.getTable().getSelectionModel()
+					.getSelectedItems();
+		    if(tableItems.isEmpty()) {
+		    	maintainCatalogsWindow.setMessageBar("Nothing to delete!");
+		    } else if (selectedIndices == null || selectedIndices.isEmpty()) {
+		    	maintainCatalogsWindow.setMessageBar("Please select a row.");
+		    } else {
+		    	try {
+		    	boolean result =  ManageProductsData.INSTANCE.removeFromCatalogList(selectedItems);
+			    if(result) {
+			    	maintainCatalogsWindow.getTable().setItems(ManageProductsData.INSTANCE.getCatalogList());
+			    	maintainCatalogsWindow.clearMessages();
+			    } else {
+			    	maintainCatalogsWindow.displayInfo("No items deleted.");
+			    }
+		    	}
+		    	catch (BackendException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				
+		    }
+		    }
+		}
+	}
+		public deleteCataloghandler getDeleteCatalogHandler() {
+			return new deleteCataloghandler();
+		}
+		
+	
+	public void setMaintainCatalogsWindow(MaintainCatalogsWindow maintainCatalogsWindow) {
+		this.maintainCatalogsWindow = maintainCatalogsWindow;
+	}
 	/*
 	 * private MenuItem maintainCatalogs() { MenuItem retval = new
 	 * MenuItem("Maintain Catalogs"); retval.setOnAction(evt -> {
@@ -209,4 +287,5 @@ public enum ManageProductsUIControl {
 	 * 
 	 * }); return retval; }
 	 */
-}
+	}
+
