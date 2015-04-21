@@ -35,13 +35,13 @@ public enum ViewOrdersUIControl {
 	        	displayError(e.getMessage());
 	        	return;
 	        }			
-				try {
-					ViewOrdersController.INSTANCE.getOrderHistory();
-				} catch (BackendException | DatabaseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
+//				try {
+//				//	ViewOrdersController.INSTANCE.getOrderHistory();
+//				} catch (BackendException | DatabaseException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			
 		
 			try {
 				ordersWindow.setData(FXCollections.observableList(ViewOrdersData.INSTANCE.getOrders()));
