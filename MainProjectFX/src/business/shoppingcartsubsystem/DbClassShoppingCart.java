@@ -330,7 +330,10 @@ public class DbClassShoppingCart implements DbClass {
                                         rs.getInt("cartitemid"),
                                         makeString(rs.getInt("quantity")),
                                         makeString(rs.getDouble("totalprice")),
-                                        true);
+                                        true,
+                                        rs.getDouble("shipmentCost"),
+                                        rs.getDouble("taxAmount")
+                                        );
                 
                 cartItemsList.add(cartItem);
             }

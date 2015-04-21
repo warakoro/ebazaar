@@ -100,6 +100,8 @@ class DbClassOrder implements DbClass {
 				orderItem = OrderSubsystemFacade.createOrderItem(cItem.getProductid(), orderId,Integer.parseInt(cItem.getQuantity()), Double.parseDouble(cItem.getTotalprice())); 
 				orderItem.setOrderId(orderId);
 				orderItem.setProductId(cItem.getProductid());
+				orderItem.setShipmentCost(cItem.getShipmentCost());
+				orderItem.setTaxAmount(cItem.getTaxAmount());
 				submitOrderItem(orderItem);
 				orderItems.add(orderItem);
 			} catch (BackendException e) {
@@ -178,7 +180,7 @@ class DbClassOrder implements DbClass {
 	private void buildSaveOrderItemQuery() {
 		
 		query = "INSERT into orderItem (orderitemid, orderid, productid, quantity, totalprice, shipmentcost, taxamount)"
-		        + " VALUES(NULL," +  orderItem.getOrderId() + "," + orderItem.getProductId() + "," + orderItem.getQuantity() + "," + orderItem.getTotalPrice() + ", 5 , 6)";
+		        + " VALUES(NULL," +  orderItem.getOrderId() + "," + orderItem.getProductId() + "," + orderItem.getQuantity() + "," + orderItem.getTotalPrice() +  "," + orderItem.getShipmentCost() + "," + orderItem.getTaxAmount() + ")";
 
 	}
 

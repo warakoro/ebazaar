@@ -16,6 +16,9 @@ public interface OrderItem {
     public void setQuantity(int id);
     public void setUnitPrice(double u);
     public void setProductId(int id);
-
+    public double getShipmentCost();
+    public double getTaxAmount();
+    public void setShipmentCost(Double shipmentCost);
+    public void setTaxAmount(Double taxAmount);
 
 }
