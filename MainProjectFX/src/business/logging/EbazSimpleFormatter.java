@@ -8,7 +8,7 @@ public class EbazSimpleFormatter extends SimpleFormatter {
 	public String format(LogRecord record) {
 		
 		String retVal = record.getLevel().toString()+": " +
-			record.getMessage() + "\r\n";
+			record.getMessage() +"\r\n";
 		return retVal;
 	}
 }

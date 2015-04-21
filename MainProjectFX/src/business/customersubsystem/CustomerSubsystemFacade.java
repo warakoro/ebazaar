@@ -54,6 +54,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		shoppingCartSubsystem = ShoppingCartSubsystemFacade.INSTANCE;
 		shoppingCartSubsystem.setCustomerProfile(customerProfile);
 		shoppingCartSubsystem.retrieveSavedCart();
+		LOG.info("Adding CUSTOMER to the session Cache");
 		SessionCache.getInstance().add(BusinessConstants.CUSTOMER, this);
     }
     
@@ -159,6 +160,7 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		// ///DONE\\\\\
 		List<Address> listOfAddress = new ArrayList<Address>();
 		try {
+    		LOG.info("Getting all address");
 			DbClassAddress dbclass = new DbClassAddress();
 			dbclass.readAllAddresses(customerProfile);
 			listOfAddress = dbclass.getAddressList();
