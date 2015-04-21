@@ -1,4 +1,3 @@
-
 package business.shoppingcartsubsystem;
 
 import static business.util.StringParse.makeString;
@@ -17,12 +16,12 @@ import middleware.externalinterfaces.DbClass;
 import middleware.externalinterfaces.DbConfigKey;
 import business.customersubsystem.CustomerSubsystemFacade;
 import business.exceptions.BackendException;
-import business.externalinterfaces.DbClassAddressForTest;
-import business.externalinterfaces.DbClassShoppingCartForTest;
 import business.externalinterfaces.Address;
 import business.externalinterfaces.CartItem;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerProfile;
+import business.externalinterfaces.DbClassAddressForTest;
+import business.externalinterfaces.DbClassShoppingCartForTest;
 import business.externalinterfaces.ShoppingCart;
 
 
@@ -92,7 +91,7 @@ public class DbClassShoppingCart implements DbClass {
     		"billaddress2, billcity, billstate, billzipcode, nameoncard, " +
     		"expdate,cardtype, cardnum, totalpriceamount, totalshipmentcost, "+ 
     		"totaltaxamount, totalamountcharged) " +
-    		"VALUES (" + custProfile.getCustId() + ", '" + cart.getShippingAddress().getStreet() + "', '" + 
+    		"VALUES (" + custProfile.getCustId() + ", '" + cart.getShippingAddress().getStreet() + "', '','" + 
     		   "" + cart.getShippingAddress().getCity() + "', '" + cart.getShippingAddress().getState() + "', '" +
     		   cart.getShippingAddress().getZip() + "', '" + cart.getBillingAddress().getStreet() + "', '" + 
     		   "" + "', '" + cart.getBillingAddress().getCity() + "', '" + cart.getBillingAddress().getState() + "', '" +
@@ -305,22 +304,23 @@ public class DbClassShoppingCart implements DbClass {
     			String num  = rs.getString("cardnum");
     			String type = rs.getString("cardtype");
     			String exp  = rs.getString("expdate");
-    			creditCard 
-    			  = CustomerSubsystemFacade.createCreditCard(name, exp, num, type);
-    				
+    			creditCard = 
+    				CustomerSubsystemFacade.createCreditCard(name, exp, num, type);
     			
     			//load cart
     			cartImpl.setCartId((new Integer(rs.getInt("shopcartid")).toString()));
     			cartImpl.setShipAddress(shippingAddress);
     			cartImpl.setBillAddress(billingAddress);
     			cartImpl.setPaymentInfo(creditCard);
+    			
+    			
     		}
     	}
     	catch(SQLException e){
             throw new DatabaseException(e);
         } 
+    	
     }
-
     private void populateCartItemsList(ResultSet rs) throws BackendException {
     	CartItem cartItem = null;
         cartItemsList= new LinkedList<CartItem>();
