@@ -87,7 +87,7 @@ class DbClassOrder implements DbClass {
         order.setBillAddress(shopCart.getBillingAddress());
         order.setShipAddress(shopCart.getShippingAddress());
         order.setPaymentInfo(shopCart.getPaymentInfo());
-      
+        order.setDate(LocalDate.now());
         
 		dataAccessSS.createConnection(this);
 		dataAccessSS.startTransaction();
@@ -173,7 +173,7 @@ class DbClassOrder implements DbClass {
 		 cc.getCardNum()+"','"+
 		 cc.getCardType()+"','"+
 		 cc.getExpirationDate()+"','"+
-		 order.getOrderDate()+"',"+
+         GuiUtils.localDateAsString(order.getOrderDate())+"',"+
 		 order.getTotalPrice()+")";
 		 }
 
@@ -229,10 +229,8 @@ class DbClassOrder implements DbClass {
 			while (resultSet.next()) {
 
 				orderData.setOrderId(resultSet.getInt("orderId"));
-				orderData.setOrderItems(getOrderItems(resultSet
-						.getInt("orderId")));
-				orderData.setDate(GuiUtils.localDateForString(resultSet
-						.getString("orderdate")));
+				orderData.setOrderItems(getOrderItems(resultSet.getInt("orderId")));
+                orderData.setDate(GuiUtils.localDateForString(resultSet.getString("orderDate")));  
 				orderData.getTotalPrice();
 			}
 		} catch (SQLException e) {
