@@ -21,11 +21,10 @@ import business.externalinterfaces.CartItem;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerProfile;
 import business.externalinterfaces.DbClassAddressForTest;
-import business.externalinterfaces.DbClassShoppingCartForTest;
 import business.externalinterfaces.ShoppingCart;
 
 
-public class DbClassShoppingCart implements DbClass, DbClassShoppingCartForTest {
+public class DbClassShoppingCart implements DbClass {
 	private static final Logger LOG = Logger.getLogger(DbClassShoppingCart.class
 			.getPackage().getName());
 	private DataAccessSubsystem dataAccessSS = new DataAccessSubsystemFacade();
@@ -331,7 +330,10 @@ public class DbClassShoppingCart implements DbClass, DbClassShoppingCartForTest 
                                         rs.getInt("cartitemid"),
                                         makeString(rs.getInt("quantity")),
                                         makeString(rs.getDouble("totalprice")),
-                                        true);
+                                        true,
+                                        rs.getDouble("shipmentCost"),
+                                        rs.getDouble("taxAmount")
+                                        );
                 
                 cartItemsList.add(cartItem);
             }

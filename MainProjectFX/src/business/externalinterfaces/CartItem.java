@@ -9,4 +9,9 @@ public interface CartItem {
 	public String getQuantity();
 	public String getTotalprice();
 	public void setCartId(int id);
+    public Double getShipmentCost();
+    public Double getTaxAmount();
+    public void setShipmentCost(Double shipmentCost);
+    public void setTaxAmount(Double taxAmount);
+
 }

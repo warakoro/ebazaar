@@ -125,7 +125,12 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 		
 		LOG.info("Uploading order Data in to memory");
 		orderSubsystem = new OrderSubsystemFacade(customerProfile);
-		orderHistory = orderSubsystem.getOrderHistory();
+		try {
+			orderHistory = orderSubsystem.getOrderHistory();
+		} catch (DatabaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.setOrderHistory(orderHistory);
 	}
     /**
@@ -234,7 +239,11 @@ public class CustomerSubsystemFacade implements CustomerSubsystem {
 	public void submitOrder() throws BackendException {
 		///DONE\\\
 		//this operation is done by order subsystem
-		orderSubsystem.submitOrder(shoppingCartSubsystem.getLiveCart());
+		try {
+			orderSubsystem.submitOrder(shoppingCartSubsystem.getLiveCart());
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

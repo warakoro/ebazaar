@@ -10,6 +10,8 @@ public class OrderItemImpl implements OrderItem {
 	private int productId;
 	private int quantity;
 	private double unitPrice;
+	private double shipmentCost;
+	private double taxAmount;
 	public OrderItemImpl(String name, int quantity, double price) {
 		productName = name;
 		this.quantity = quantity;
@@ -60,7 +62,7 @@ public class OrderItemImpl implements OrderItem {
 
 	@Override
 	public int getProductId() {
-		return -1;
+		return productId;
 	}
 
 	@Override
@@ -68,7 +70,25 @@ public class OrderItemImpl implements OrderItem {
 		productId = id;
 		
 	}
+	@Override
+	public double getShipmentCost() {
+		return shipmentCost;
+	}
+	@Override
+	public double getTaxAmount() {
+		return taxAmount;
+	}
 
+	@Override
+	public void setShipmentCost(Double shipmentCost) {
+		if(shipmentCost!=null)
+		this.shipmentCost = shipmentCost;	
+	}
+
+	@Override
+	public void setTaxAmount(Double taxAmount) {
+		if(taxAmount!=null)
+		this.taxAmount = taxAmount;		
+	}
 	
-
 }

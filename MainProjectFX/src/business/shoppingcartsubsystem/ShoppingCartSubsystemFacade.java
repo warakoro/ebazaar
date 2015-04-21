@@ -18,7 +18,6 @@ import business.externalinterfaces.CartItem;
 import business.externalinterfaces.CreditCard;
 import business.externalinterfaces.CustomerProfile;
 import business.externalinterfaces.CustomerSubsystem;
-import business.externalinterfaces.DbClassShoppingCartForTest;
 import business.externalinterfaces.Rules;
 import business.externalinterfaces.ShoppingCart;
 import business.externalinterfaces.ShoppingCartSubsystem;
@@ -161,9 +160,9 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 		
 	}
 	
-	public static DbClassShoppingCartForTest createDBClassTestCart(){
+/*	public static DbClassShoppingCartForTest createDBClassTestCart(){
 		return new DbClassShoppingCart();
-	}
+	}*/
 	
 	public static ShoppingCart createTestShoppingCart(){
 		ShoppingCartImpl shoppingCart = new ShoppingCartImpl(new ArrayList<CartItem>());

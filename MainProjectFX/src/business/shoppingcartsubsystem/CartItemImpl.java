@@ -1,4 +1,3 @@
-
 package business.shoppingcartsubsystem;
 
 import java.util.logging.Logger;
@@ -17,7 +16,8 @@ public class CartItemImpl implements CartItem {
     String quantity;
     String totalprice;
 	String productName;
-	
+	Double shipmentCost;
+	Double taxAmount;
 //	this is true if this cart item is data that has come from
     //database
     boolean alreadySaved;
@@ -40,13 +40,17 @@ public class CartItemImpl implements CartItem {
                     Integer lineitemid, 
                     String quantity, 
                     String totalprice,
-                    boolean alreadySaved) throws BackendException {
+                    boolean alreadySaved,
+                    Double shipmentCost,
+                    Double taxAmount) throws BackendException {
         this.cartid = cartid;
         this.productid= productid;
         this.cartItemId = lineitemid;
         this.quantity = quantity;
         this.totalprice =totalprice;
         this.alreadySaved = alreadySaved;
+        this.shipmentCost =shipmentCost;
+        this.taxAmount = taxAmount;
         ProductSubsystem prodSS= new ProductSubsystemFacade();
         productName = prodSS.getProductFromId(productid).getProductName();
     }
@@ -62,6 +66,10 @@ public class CartItemImpl implements CartItem {
         buf.append("quantity = <"+quantity+">,");
         buf.append("totalprice = <"+totalprice+">");
         buf.append("alreadySaved = <"+alreadySaved+">");
+        buf.append("totalprice = <"+totalprice+">");
+        buf.append("alreadySaved = <"+alreadySaved+">");
+        buf.append("shipmentCost = <"+shipmentCost+">");
+        buf.append("taxAmount = <"+taxAmount+">");
         return buf.toString();
     }
 	public boolean isAlreadySaved() {
@@ -88,4 +96,25 @@ public class CartItemImpl implements CartItem {
 	public void setCartId(int id) {
 		this.cartid = id;
 	}
+	
+	@Override
+	public Double getShipmentCost() {
+		return shipmentCost;
+	}
+	
+	@Override
+	public Double getTaxAmount() {
+		return taxAmount;
+	}
+
+	@Override
+	public void setShipmentCost(Double shipmentCost) {
+		this.shipmentCost = shipmentCost;	
+	}
+
+	@Override
+	public void setTaxAmount(Double taxAmount) {
+		this.taxAmount = taxAmount;		
+	}
+	
 }
