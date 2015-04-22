@@ -14,13 +14,16 @@ import presentation.data.DataUtil;
 import presentation.data.DefaultData;
 import presentation.data.ManageProductsData;
 import presentation.data.ProductPres;
+import presentation.data.ViewOrdersData;
 import presentation.gui.AddCatalogPopup;
 import presentation.gui.AddProductPopup;
 import presentation.gui.MaintainCatalogsWindow;
 import presentation.gui.MaintainProductsWindow;
 import presentation.gui.MessageableWindow;
+import presentation.gui.OrdersWindow;
 import presentation.gui.ProductListWindow;
 import presentation.gui.TableUtil;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -49,18 +52,19 @@ public enum ManageProductsUIControl {
 	
 	// Manage catalogs
 	private class MaintainCatalogsHandler implements EventHandler<ActionEvent>, Callback {
+		
 		@Override
 		public void handle(ActionEvent e) {
 			maintainCatalogsWindow = new MaintainCatalogsWindow(primaryStage);
 			boolean isLoggedIn = DataUtil.isLoggedIn();
 			if (!isLoggedIn) {
-				LoginUIControl loginControl = new LoginUIControl(maintainCatalogsWindow, primaryStage);
+				LoginUIControl loginControl = new LoginUIControl(maintainCatalogsWindow, primaryStage,this);
 				loginControl.startLogin();
 			} else {
 				doUpdate();
 			}
 		}
-
+		
 		@Override
 		public Text getMessageBar() {
 			return startScreenCallback.getMessageBar();
@@ -74,10 +78,11 @@ public enum ManageProductsUIControl {
 	        	displayError(e.getMessage());
 	        	return;
 	        }
-			ObservableList<CatalogPres> list = ManageProductsData.INSTANCE.getCatalogList();
-			maintainCatalogsWindow.setData(list);
+			//ObservableList<CatalogPres> list = ManageProductsData.INSTANCE.getCatalogList();
+			//maintainCatalogsWindow.setData(list);
+			maintainCatalogsWindow.setData(FXCollections.observableList(ManageProductsData.INSTANCE.getCatalogList()));
+            primaryStage.hide();
 			maintainCatalogsWindow.show();
-			primaryStage.hide();
 
 		}
 	}
@@ -92,7 +97,7 @@ public enum ManageProductsUIControl {
 			maintainProductsWindow = new MaintainProductsWindow(primaryStage);
 			boolean isLoggedIn = DataUtil.isLoggedIn();
 			if (!isLoggedIn) {
-				LoginUIControl loginControl = new LoginUIControl(maintainProductsWindow, primaryStage);
+				LoginUIControl loginControl = new LoginUIControl(maintainProductsWindow, primaryStage,this);
 				loginControl.startLogin();
 			} else {
 				doUpdate();
@@ -107,18 +112,23 @@ public enum ManageProductsUIControl {
 		@Override
 		public void doUpdate() {
 			try {
-	    		Authorization.checkAuthorization(maintainProductsWindow, DataUtil.custIsAdmin());
+	    		Authorization.checkAuthorization(maintainProductsWindow, DataUtil.custIsAdmin());	    		
 	    	} catch(UnauthorizedException e) {   
 	        	displayError(e.getMessage());
 	        	return;
 	        }
 			CatalogPres selectedCatalog = ManageProductsData.INSTANCE.getSelectedCatalog();
+			//productListWindow.setData(FXCollections.observableList(ManageProductsData.INSTANCE.getCatalogList()));
+	          
 			if(selectedCatalog != null) {
-				ObservableList<ProductPres> list = ManageProductsData.INSTANCE.getProductsList(selectedCatalog);
-				maintainProductsWindow.setData(ManageProductsData.INSTANCE.getCatalogList(), list);
+//				ObservableList<ProductPres> list = ManageProductsData.INSTANCE.getProductsList(selectedCatalog);
+//				maintainProductsWindow.setData(ManageProductsData.INSTANCE.getCatalogList(), list);
+				maintainProductsWindow.setData(FXCollections.observableList(ManageProductsData.INSTANCE.getProductsList(selectedCatalog)));
+		         
 			}
+		    primaryStage.hide();
 			maintainProductsWindow.show();  
-	        primaryStage.hide();
+	     
 		}
 	}
 	public MaintainProductsHandler getMaintainProductsHandler() {
@@ -185,8 +195,6 @@ public enum ManageProductsUIControl {
 		return new AddCatalogsHandler();
 	}
 	
-	
-
 	public void setAddCatalogWindowInfo(AddCatalogPopup catPopup) {
 		this.addCatalogPopup = catPopup;		 
 	}
