@@ -19,11 +19,12 @@ import middleware.externalinterfaces.DbClass;
 import middleware.externalinterfaces.DbConfigKey;
 import business.Util;
 import business.externalinterfaces.Catalog;
+import business.externalinterfaces.DbClassProductForTest;
 import business.externalinterfaces.Product;
 import business.externalinterfaces.ProductFromGui;
 import business.util.TwoKeyHashMap;
 
-class DbClassProduct implements DbClass {
+class DbClassProduct implements DbClass, DbClassProductForTest  {
 	@SuppressWarnings("unused")
 	private static final Logger LOG = Logger.getLogger(DbClassProduct.class
 			.getPackage().getName());

@@ -159,4 +159,8 @@ public class ProductSubsystemFacade implements ProductSubsystem {
     		throw new BackendException(e);
 		}
 	}
+	@Override
+	public DbClassProductForTest getGenericDbClassProductForTest() {
+		return new DbClassProduct();
+	}
 }
