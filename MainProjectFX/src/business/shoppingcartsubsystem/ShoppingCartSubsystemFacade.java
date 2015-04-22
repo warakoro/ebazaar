@@ -1,6 +1,7 @@
 package business.shoppingcartsubsystem;
 
 import java.util.ArrayList;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -21,6 +22,7 @@ import business.externalinterfaces.CustomerSubsystem;
 import business.externalinterfaces.Rules;
 import business.externalinterfaces.ShoppingCart;
 import business.externalinterfaces.ShoppingCartSubsystem;
+import business.externalinterfaces.DbClassShoppingCartForTest;
 
 public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 	INSTANCE;
@@ -160,9 +162,9 @@ public enum ShoppingCartSubsystemFacade implements ShoppingCartSubsystem {
 		
 	}
 	
-/*	public static DbClassShoppingCartForTest createDBClassTestCart(){
+	public static DbClassShoppingCartForTest createDBClassTestCart(){
 		return new DbClassShoppingCart();
-	}*/
+	}
 	
 	public static ShoppingCart createTestShoppingCart(){
 		ShoppingCartImpl shoppingCart = new ShoppingCartImpl(new ArrayList<CartItem>());
