@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import middleware.exceptions.DatabaseException;
 import business.exceptions.BackendException;
 import business.externalinterfaces.CustomerProfile;
+import business.externalinterfaces.DbClassOrderForTest;
 import business.externalinterfaces.Order;
 import business.externalinterfaces.OrderItem;
 import business.externalinterfaces.OrderSubsystem;
@@ -102,4 +103,20 @@ public class OrderSubsystemFacade implements OrderSubsystem {
 		dbClass.submitOrder(shopCart);
 
 	}
+
+	@Override
+	public DbClassOrderForTest getGenericDbClassOrder() {
+		// TODO Auto-generated method stub
+		return new DbClassOrder();
+		//return null;
+	}
+
+	@Override
+	public OrderItem getGenericOrderItem() {
+		return new OrderItemImpl("Test item",1,20);
+	}
+
+
+	
+	
 }

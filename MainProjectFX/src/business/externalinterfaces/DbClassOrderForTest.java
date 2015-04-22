@@ -6,5 +6,8 @@ import middleware.exceptions.DatabaseException;
 import middleware.externalinterfaces.DbClass;
 
 public interface DbClassOrderForTest extends DbClass {
-	 public List<OrderItem> getOrderItems(Integer orderId) throws DatabaseException;
+	
+	//for testing read order
+
+	public List<OrderItem> getOrderItems(Integer i) throws DatabaseException;
 }

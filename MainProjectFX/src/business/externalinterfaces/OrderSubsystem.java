@@ -20,7 +20,11 @@ public interface OrderSubsystem {
 	 * @throws DatabaseException 
 	 */ 
     void submitOrder(ShoppingCart shopCart) throws BackendException, DatabaseException;
-	
+
+    public DbClassOrderForTest getGenericDbClassOrder();
+    public OrderItem getGenericOrderItem();
+
+ 
 	
 
 }
