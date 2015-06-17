@@ -154,5 +154,5 @@ public class Start extends Application {
 		
 	}
 	
-	public void justtest(){
+	
 }
